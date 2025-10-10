@@ -12,23 +12,20 @@
 * limitations under the License.
 */
 
-package eu.antoinepurnelle.jobapplication
+package eu.antoinepurnelle.jobapplication.data.model
 
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import eu.antoinepurnelle.jobapplication.di.allModules
-import eu.antoinepurnelle.jobapplication.main.MainScreen
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.KoinApplication
-
-@Composable
-@Preview
-fun App() = KoinApplication(
-    application = {
-        modules(allModules)
-    },
+data class Resume(
+    val mainInfo: MainInfo,
 ) {
-    MaterialTheme {
-        MainScreen()
-    }
+    data class MainInfo(
+        val name: String,
+        val headline: String,
+        val pictureUrl: String?,
+        val location: String?,
+        val dateOfBirth: String?,
+        val phoneNumber: String,
+        val emailAddress: String,
+        val linkedIn: String?,
+        val github: String?,
+    )
 }

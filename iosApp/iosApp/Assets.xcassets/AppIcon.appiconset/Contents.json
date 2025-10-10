@@ -1,0 +1,38 @@
+{
+  "images": [
+    {
+      "filename": "Job[App]lication-light-1024-iOS.png",
+      "idiom": "universal",
+      "platform": "ios",
+      "size": "1024x1024"
+    },
+    {
+      "appearances": [
+        {
+          "appearance": "luminosity",
+          "value": "dark"
+        }
+      ],
+      "filename": "Job[App]lication-dark-1024-iOS.png",
+      "idiom": "universal",
+      "platform": "ios",
+      "size": "1024x1024"
+    },
+    {
+      "appearances": [
+        {
+          "appearance": "luminosity",
+          "value": "tinted"
+        }
+      ],
+      "filename": "Job[App]lication-tinted-1024-iOS.png",
+      "idiom": "universal",
+      "platform": "ios",
+      "size": "1024x1024"
+    }
+  ],
+  "info": {
+    "author": "xcode",
+    "version": 1
+  }
+}

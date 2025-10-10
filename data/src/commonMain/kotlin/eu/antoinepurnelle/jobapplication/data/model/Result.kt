@@ -12,23 +12,25 @@
 * limitations under the License.
 */
 
-package eu.antoinepurnelle.jobapplication
+package eu.antoinepurnelle.jobapplication.data.model
 
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import eu.antoinepurnelle.jobapplication.di.allModules
-import eu.antoinepurnelle.jobapplication.main.MainScreen
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.KoinApplication
+interface RepoError
 
-@Composable
-@Preview
-fun App() = KoinApplication(
-    application = {
-        modules(allModules)
-    },
-) {
-    MaterialTheme {
-        MainScreen()
-    }
+sealed interface RepoResult<out D, out E : RepoError> {
+    data class Success<out D>(val data: D) : RepoResult<D, Nothing>
+    data class Error<out E : RepoError>(val error: E) : RepoResult<Nothing, E>
 }
+
+enum class NetworkError : RepoError {
+    REQUEST_TIMEOUT,
+    UNAUTHORIZED,
+    CONFLICT,
+    TOO_MANY_REQUESTS,
+    NO_INTERNET,
+    PAYLOAD_TOO_LARGE,
+    SERVER_ERROR,
+    SERIALIZATION,
+    UNKNOWN,
+}
+
+data object TransformationError : RepoError

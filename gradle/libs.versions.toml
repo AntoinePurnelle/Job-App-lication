@@ -14,6 +14,7 @@
 # Kotlin
 kotlin = "2.2.20"
 kotlinx-coroutines = "1.10.2"
+ksp = "2.2.20-2.0.4"
 
 # Android
 agp = "8.13.0"
@@ -23,9 +24,7 @@ android-targetSdk = "36"
 androidx-activity = "1.11.0"
 androidx-appcompat = "1.7.1"
 androidx-core = "1.17.0"
-androidx-espresso = "3.7.0"
 androidx-lifecycle = "2.9.4"
-androidx-testExt = "1.3.0"
 
 # Compose
 composeMultiplatform = "1.9.0"
@@ -33,20 +32,25 @@ composeHotReload = "1.0.0-rc01"
 
 # Tools
 koin = "4.1.1"
+ktor = "3.3.1"
 
 # Testing & Checks
 junit = "4.13.2"
+kotest = "6.0.3"
+mockk = "1.14.6"
+junitparams = "1.1.1"
+datafaker = "2.5.1"
 detekt = "1.23.8"
 ktlint = "13.1.0"
 
 [libraries]
 # Kotlin
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 
 # Android
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
-androidx-testExt-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-testExt" }
-androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "androidx-espresso" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-lifecycle-viewmodelCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
@@ -57,14 +61,26 @@ koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android" }
 koin-compose = { module = "io.insert-koin:koin-compose" }
-koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel" }
-koin-compose-viewmodel-nav = { module = "io.insert-koin:koin-compose-viewmodel-navigation", version.ref = "koin" }
-koin-compose-viewmodel-navigation = { module = "io.insert-koin:koin-compose-viewmodel-navigation" }
+koin-compose-viewmodel-nav = { module = "io.insert-koin:koin-compose-viewmodel-navigation" }
+
+# Ktor
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-serialization = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 # Testing
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
-kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { module = "junit:junit", version.ref = "junit" }
+junitparams = { module = "pl.pragmatists:JUnitParams", version.ref = "junitparams" }
+kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+datafaker = { module = "net.datafaker:datafaker", version.ref = "datafaker" }
+coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -73,5 +89,19 @@ composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "com
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+kotest = { id = "io.kotest", version.ref = "kotest" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+androidKotlinMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
+androidLint = { id = "com.android.lint", version.ref = "agp" }
+
+[bundles]
+ktor = [
+    "ktor-client-core",
+    "ktor-client-auth",
+    "ktor-client-logging",
+    "ktor-client-content-negotiation",
+    "ktor-client-serialization"
+]

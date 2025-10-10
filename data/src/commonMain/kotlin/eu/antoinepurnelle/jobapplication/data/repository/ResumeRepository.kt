@@ -12,23 +12,19 @@
 * limitations under the License.
 */
 
-package eu.antoinepurnelle.jobapplication
+package eu.antoinepurnelle.jobapplication.data.repository
 
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import eu.antoinepurnelle.jobapplication.di.allModules
-import eu.antoinepurnelle.jobapplication.main.MainScreen
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.KoinApplication
+import eu.antoinepurnelle.jobapplication.data.model.RepoError
+import eu.antoinepurnelle.jobapplication.data.model.RepoResult
+import eu.antoinepurnelle.jobapplication.data.model.Resume
 
-@Composable
-@Preview
-fun App() = KoinApplication(
-    application = {
-        modules(allModules)
-    },
-) {
-    MaterialTheme {
-        MainScreen()
-    }
+fun interface ResumeRepository {
+
+    /**
+     * Fetch the resume from the repository.
+     *
+     * @return [RepoResult] containing either the [Resume] on success or a [RepoError] on failure.
+     */
+    suspend fun getResume(): RepoResult<Resume, RepoError>
+
 }

@@ -12,23 +12,12 @@
 * limitations under the License.
 */
 
-package eu.antoinepurnelle.jobapplication
+package eu.antoinepurnelle.jobapplication.di
 
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import eu.antoinepurnelle.jobapplication.di.allModules
-import eu.antoinepurnelle.jobapplication.main.MainScreen
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.KoinApplication
+import eu.antoinepurnelle.jobapplication.main.MainScreenViewModel
+import org.koin.core.module.dsl.viewModelOf
+import org.koin.dsl.module
 
-@Composable
-@Preview
-fun App() = KoinApplication(
-    application = {
-        modules(allModules)
-    },
-) {
-    MaterialTheme {
-        MainScreen()
-    }
+val screensModule = module {
+    viewModelOf(::MainScreenViewModel)
 }

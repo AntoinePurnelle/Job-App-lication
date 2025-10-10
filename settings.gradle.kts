@@ -49,3 +49,4 @@ plugins {
 }
 
 include(":composeApp")
+include(":data")
