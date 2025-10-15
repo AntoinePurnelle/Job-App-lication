@@ -1,0 +1,105 @@
+/*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     https://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+package eu.antoinepurnelle.jobapplication.mainscreen
+
+import eu.antoinepurnelle.jobapplication.domain.model.Failure
+import eu.antoinepurnelle.jobapplication.domain.model.Result
+import eu.antoinepurnelle.jobapplication.domain.usecase.FetchMainPageUseCase
+import eu.antoinepurnelle.jobapplication.mainscreen.MainScreenViewModel.MainUiState
+import eu.antoinepurnelle.jobapplication.mainscreen.MainScreenViewModel.MainUiState.Loaded
+import eu.antoinepurnelle.jobapplication.mainscreen.model.MainPageUiModel
+import io.kotest.matchers.shouldBe
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.coVerifySequence
+import io.mockk.confirmVerified
+import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+
+class MainScreenViewModelTest {
+
+    @MockK private lateinit var fetchMainPageUseCase: FetchMainPageUseCase
+
+    private lateinit var viewModel: MainScreenViewModel
+
+    @BeforeTest
+    fun setup() {
+        fetchMainPageUseCase = mockk()
+    }
+
+    @AfterTest
+    fun tearDown() {
+        confirmVerified(fetchMainPageUseCase)
+    }
+
+    @Test
+    fun `init - fetch success - should call fetchMainPageUseCase and set Loaded UiState`() {
+        // GIVEN
+        // THIS DATA
+        val uiModel = mockk<MainPageUiModel>()
+        val fetchResult = Result.Success(uiModel)
+        val expectedUiState = Loaded(uiModel)
+
+        // THIS BEHAVIOR
+        coEvery { fetchMainPageUseCase<MainPageUiModel>() } returns fetchResult
+
+        // WHEN
+        viewModel = MainScreenViewModel(fetchMainPageUseCase)
+
+        // THEN
+        // THIS SHOULD HAVE HAPPENED
+        coVerify {
+            fetchMainPageUseCase<MainPageUiModel>()
+        }
+
+        // THIS SHOULD BE
+        viewModel shouldHaveState expectedUiState
+    }
+
+    @Test
+    fun `init - fetch failed - should call fetchMainPageUseCase and set Error UiState`() {
+        // GIVEN
+        // THIS DATA
+        val failureMessage = "failure message"
+        val error = object : Failure {
+            override fun toString(): String = failureMessage
+        }
+        val fetchResult = Result.Error(error)
+        val expectedUiState = MainUiState.Error(failureMessage)
+
+        // THIS BEHAVIOR
+        coEvery { fetchMainPageUseCase<MainPageUiModel>() } returns fetchResult
+
+        // WHEN
+        viewModel = MainScreenViewModel(fetchMainPageUseCase)
+
+        // THEN
+        // THIS SHOULD HAVE HAPPENED
+        coVerifySequence {
+            fetchMainPageUseCase<MainPageUiModel>()
+        }
+
+        // THIS SHOULD BE
+        viewModel shouldHaveState expectedUiState
+    }
+
+    private infix fun MainScreenViewModel.shouldHaveState(state: MainUiState) {
+        this.uiState.value shouldBe state
+    }
+
+}

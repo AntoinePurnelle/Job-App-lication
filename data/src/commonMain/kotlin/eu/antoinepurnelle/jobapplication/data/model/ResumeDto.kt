@@ -23,6 +23,8 @@ data class ResumeDto(
     @Serializable
     data class ResumeWrapperDto(
         val mainInfo: MainInfoDto? = null,
+        val experiences: List<ExperienceDto> = emptyList(),
+        val education: EducationDto? = null,
     ) {
         @Serializable
         data class MainInfoDto(
@@ -36,5 +38,45 @@ data class ResumeDto(
             val linkedIn: String? = null,
             val github: String? = null,
         )
+
+        @Serializable
+        data class ExperienceDto(
+            val title: String? = null,
+            val company: String? = null,
+            val pictureUrl: String? = null,
+            val startDate: String? = null,
+            val endDate: String? = null,
+        )
+
+        @Serializable
+        data class EducationDto(
+            val diplomas: List<DiplomaDto> = emptyList(),
+            val courses: List<CourseDto> = emptyList(),
+            val conferences: List<ConferenceDto> = emptyList(),
+        ) {
+            @Serializable
+            data class DiplomaDto(
+                val name: String? = null,
+                val description: String? = null,
+                val date: String? = null,
+                val establishment: String? = null,
+                val pictureUrl: String? = null,
+            )
+
+            @Serializable
+            data class CourseDto(
+                val name: String? = null,
+                val date: String? = null,
+                val organization: String? = null,
+                val pictureUrl: String? = null,
+            )
+
+            @Serializable
+            data class ConferenceDto(
+                val name: String? = null,
+                val date: String? = null,
+                val pictureUrl: String? = null,
+            )
+        }
     }
 }

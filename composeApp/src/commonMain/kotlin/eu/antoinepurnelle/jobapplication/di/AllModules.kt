@@ -15,8 +15,10 @@
 package eu.antoinepurnelle.jobapplication.di
 
 import eu.antoinepurnelle.jobapplication.data.di.dataModule
+import eu.antoinepurnelle.jobapplication.domain.di.domainModule
 
 val allModules = listOf(
-    screensModule,
     dataModule,
+    domainModule,
+    screensModule,
 )

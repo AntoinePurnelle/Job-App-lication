@@ -14,15 +14,15 @@
 
 package data.remote
 
-import eu.antoinepurnelle.jobapplication.data.model.NetworkError
-import eu.antoinepurnelle.jobapplication.data.model.RepoResult
-import eu.antoinepurnelle.jobapplication.data.model.Resume
 import eu.antoinepurnelle.jobapplication.data.model.ResumeDto
-import eu.antoinepurnelle.jobapplication.data.model.TransformationError
 import eu.antoinepurnelle.jobapplication.data.remote.ApiClient
 import eu.antoinepurnelle.jobapplication.data.remote.ResumeRemoteRepository
-import eu.antoinepurnelle.jobapplication.data.repository.ResumeRepository
 import eu.antoinepurnelle.jobapplication.data.transformer.ResumeDtoTransformer
+import eu.antoinepurnelle.jobapplication.domain.model.NetworkError
+import eu.antoinepurnelle.jobapplication.domain.model.Result
+import eu.antoinepurnelle.jobapplication.domain.model.Resume
+import eu.antoinepurnelle.jobapplication.domain.model.TransformationFailure
+import eu.antoinepurnelle.jobapplication.domain.repository.ResumeRepository
 import io.kotest.matchers.shouldBe
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
@@ -65,21 +65,21 @@ class ResumeRemoteRepositoryTest {
 
     @Suppress("unused", "UnusedPrivateMember")
     private fun getTransformerResultParams() = arrayOf(
-        arrayOf(RepoResult.Error(TransformationError)),
-        arrayOf(RepoResult.Success(mockk<Resume>())),
+        arrayOf(Result.Error(TransformationFailure)),
+        arrayOf(Result.Success(mockk<Resume>())),
     )
 
     @Test
     @Parameters(method = "getTransformerResultParams")
     fun `getResume - fetch success - should return transformer result`(
-        transformerResult: RepoResult<Resume, TransformationError>,
+        transformerResult: Result<Resume, TransformationFailure>,
     ) = runTest {
         // GIVEN
         // THIS DATA
         val httpResponse = mockk<HttpResponse>()
         val resumeDto = mockk<ResumeDto>()
 
-        // THIS BEHAVIOUR
+        // THIS BEHAVIOR
         coEvery { client.getResume() } returns httpResponse
         coEvery { httpResponse.status } returns HttpStatusCode.OK
         coEvery { httpResponse.body<ResumeDto>() } returns resumeDto
@@ -118,9 +118,9 @@ class ResumeRemoteRepositoryTest {
         // GIVEN
         // THIS DATA
         val httpResponse = mockk<HttpResponse>()
-        val expected = RepoResult.Error(expectedError)
+        val expected = Result.Error(expectedError)
 
-        // THIS BEHAVIOUR
+        // THIS BEHAVIOR
         coEvery { client.getResume() } returns httpResponse
         coEvery { httpResponse.status } returns HttpStatusCode.fromValue(httpCode)
 
@@ -150,9 +150,9 @@ class ResumeRemoteRepositoryTest {
     ) = runTest {
         // GIVEN
         // THIS DATA
-        val expected = RepoResult.Error(expectedError)
+        val expected = Result.Error(expectedError)
 
-        // THIS BEHAVIOUR
+        // THIS BEHAVIOR
         coEvery { client.getResume() } throws throwable
 
         // WHEN

@@ -14,11 +14,18 @@
 
 package eu.antoinepurnelle.jobapplication.data.transformer
 
-import eu.antoinepurnelle.jobapplication.data.model.RepoError
-import eu.antoinepurnelle.jobapplication.data.model.RepoResult
-import eu.antoinepurnelle.jobapplication.data.model.Resume
 import eu.antoinepurnelle.jobapplication.data.model.ResumeDto
-import eu.antoinepurnelle.jobapplication.data.model.TransformationError
+import eu.antoinepurnelle.jobapplication.data.model.ResumeDto.ResumeWrapperDto
+import eu.antoinepurnelle.jobapplication.domain.model.Failure
+import eu.antoinepurnelle.jobapplication.domain.model.Result
+import eu.antoinepurnelle.jobapplication.domain.model.Resume
+import eu.antoinepurnelle.jobapplication.domain.model.Resume.Education
+import eu.antoinepurnelle.jobapplication.domain.model.Resume.Education.Conference
+import eu.antoinepurnelle.jobapplication.domain.model.Resume.Education.Course
+import eu.antoinepurnelle.jobapplication.domain.model.Resume.Education.Diploma
+import eu.antoinepurnelle.jobapplication.domain.model.Resume.Experience
+import eu.antoinepurnelle.jobapplication.domain.model.Resume.MainInfo
+import eu.antoinepurnelle.jobapplication.domain.model.TransformationFailure
 
 fun interface ResumeDtoTransformer {
 
@@ -26,9 +33,9 @@ fun interface ResumeDtoTransformer {
      * Transforms a [ResumeDto] into a [Resume].
      *
      * @param input The [ResumeDto] to transform.
-     * @return A [RepoResult] containing either the transformed [Resume] on success or a [RepoError] on failure.
+     * @return A [Result] containing either the transformed [Resume] on success or a [Failure] on failure.
      */
-    fun transform(input: ResumeDto): RepoResult<Resume, RepoError>
+    fun transform(input: ResumeDto): Result<Resume, Failure>
 
 }
 
@@ -37,29 +44,95 @@ class ResumeDtoTransformerImpl : ResumeDtoTransformer {
     @Suppress("ReturnCount") // Allowing multiple return points for clarity in error handling
     override fun transform(
         input: ResumeDto,
-    ): RepoResult<Resume, RepoError> {
-        // Validate mainInfo and its required fields
-        val mainInfoDto = input.record?.mainInfo ?: return getError()
-        val name = mainInfoDto.name ?: return getError()
-        val headline = mainInfoDto.headline ?: return getError()
-        val phoneNumber = mainInfoDto.phoneNumber ?: return getError()
-        val email = mainInfoDto.emailAddress ?: return getError()
+    ): Result<Resume, Failure> {
+        val record = input.record ?: return getError()
 
-        val mainInfo = Resume.MainInfo(
+        val mainInfo = transformMainInfo(record) ?: return getError()
+        val experiences = transformExperiences(record)
+        val education = transformEducation(record)
+
+        return Result.Success(Resume(mainInfo, experiences, education))
+    }
+
+    private fun transformMainInfo(record: ResumeWrapperDto): MainInfo? {
+        // Validate mainInfo and its required fields
+        val mainInfoDto = record.mainInfo ?: return null
+        val name = mainInfoDto.name ?: return null
+        val headline = mainInfoDto.headline ?: return null
+        val phoneNumber = mainInfoDto.phoneNumber ?: return null
+        val email = mainInfoDto.emailAddress ?: return null
+
+        return MainInfo(
             name = name,
             headline = headline,
             pictureUrl = mainInfoDto.pictureUrl,
             location = mainInfoDto.location,
-            dateOfBirth = mainInfoDto.dateOfBirth,
+            dateOfBirth = mainInfoDto.dateOfBirth?.let { LocalDateParser.parse(it) },
             phoneNumber = phoneNumber,
             emailAddress = email,
             linkedIn = mainInfoDto.linkedIn,
             github = mainInfoDto.github,
         )
-
-        return RepoResult.Success(Resume(mainInfo))
     }
 
-    private fun getError() = RepoResult.Error(TransformationError)
+    private fun transformExperiences(record: ResumeWrapperDto): List<Experience> {
+        return record.experiences.mapNotNull { expDto ->
+            val title = expDto.title ?: return@mapNotNull null
+            val company = expDto.company ?: return@mapNotNull null
+            val startDate = expDto.startDate?.let { LocalDateParser.parse(it) } ?: return@mapNotNull null
+
+            Experience(
+                title = title,
+                company = company,
+                pictureUrl = expDto.pictureUrl,
+                startDate = startDate,
+                endDate = expDto.endDate?.let { LocalDateParser.parse(it) },
+            )
+        }
+    }
+
+    private fun transformEducation(record: ResumeWrapperDto): Education {
+        val diplomas = record.education?.diplomas?.mapNotNull { diplomaDto ->
+            val name = diplomaDto.name ?: return@mapNotNull null
+            val dateObtained = diplomaDto.date ?: return@mapNotNull null
+            val establishment = diplomaDto.establishment ?: return@mapNotNull null
+
+            Diploma(
+                name = name,
+                description = diplomaDto.description,
+                dateObtained = dateObtained,
+                establishment = establishment,
+                pictureUrl = diplomaDto.pictureUrl,
+            )
+        } ?: emptyList()
+
+        val courses = record.education?.courses?.mapNotNull { courseDto ->
+            val name = courseDto.name ?: return@mapNotNull null
+            val dateCompleted = courseDto.date ?: return@mapNotNull null
+            val organization = courseDto.organization ?: return@mapNotNull null
+
+            Course(
+                name = name,
+                dateCompleted = dateCompleted,
+                organization = organization,
+                pictureUrl = courseDto.pictureUrl,
+            )
+        } ?: emptyList()
+
+        val conferences = record.education?.conferences?.mapNotNull { confDto ->
+            val name = confDto.name ?: return@mapNotNull null
+            val dateAttended = confDto.date ?: return@mapNotNull null
+
+            Conference(
+                name = name,
+                dateAttended = dateAttended,
+                pictureUrl = confDto.pictureUrl,
+            )
+        } ?: emptyList()
+
+        return Education(diplomas, courses, conferences)
+    }
+
+    private fun getError() = Result.Error(TransformationFailure)
 
 }

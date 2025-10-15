@@ -68,11 +68,14 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
+                implementation(libs.kotlinx.datetime)
                 // Koin core for DI
                 implementation(project.dependencies.platform(libs.koin.bom))
                 api(libs.koin.core)
                 // Ktor core and serialization
                 implementation(libs.bundles.ktor)
+                // Other modules
+                implementation(project(":domain"))
             }
         }
 

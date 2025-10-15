@@ -50,3 +50,5 @@ plugins {
 
 include(":composeApp")
 include(":data")
+include(":domain")
+include(":ui")

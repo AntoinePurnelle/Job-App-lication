@@ -16,9 +16,9 @@ package eu.antoinepurnelle.jobapplication.data.di
 
 import eu.antoinepurnelle.jobapplication.data.remote.ApiClient
 import eu.antoinepurnelle.jobapplication.data.remote.ResumeRemoteRepository
-import eu.antoinepurnelle.jobapplication.data.repository.ResumeRepository
 import eu.antoinepurnelle.jobapplication.data.transformer.ResumeDtoTransformer
 import eu.antoinepurnelle.jobapplication.data.transformer.ResumeDtoTransformerImpl
+import eu.antoinepurnelle.jobapplication.domain.repository.ResumeRepository
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf

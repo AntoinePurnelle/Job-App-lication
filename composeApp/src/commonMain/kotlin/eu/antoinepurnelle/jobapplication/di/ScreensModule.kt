@@ -14,10 +14,15 @@
 
 package eu.antoinepurnelle.jobapplication.di
 
-import eu.antoinepurnelle.jobapplication.main.MainScreenViewModel
+import eu.antoinepurnelle.jobapplication.domain.transformer.MainPageUiTransformer
+import eu.antoinepurnelle.jobapplication.mainscreen.MainScreenViewModel
+import eu.antoinepurnelle.jobapplication.mainscreen.transformer.MainPageUiTransformerImpl
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val screensModule = module {
     viewModelOf(::MainScreenViewModel)
+    factoryOf(::MainPageUiTransformerImpl) { bind<MainPageUiTransformer>() }
 }
