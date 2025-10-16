@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -44,9 +43,14 @@ import eu.antoinepurnelle.jobapplication.mainscreen.model.MainPageUiModel.Header
 import eu.antoinepurnelle.jobapplication.util.LaunchType
 import eu.antoinepurnelle.jobapplication.util.getContext
 import eu.antoinepurnelle.jobapplication.util.launch
+import eu.antoinepurnelle.ui.components.atoms.HorizontalDiv
 import eu.antoinepurnelle.ui.components.atoms.RoundedCornerShapeDefault
 import eu.antoinepurnelle.ui.components.atoms.UrlImage
+import eu.antoinepurnelle.ui.components.atoms.VerticalSpacer
+import eu.antoinepurnelle.ui.components.atoms.VerticalSpacerLarge
+import eu.antoinepurnelle.ui.components.atoms.VerticalSpacerSmall
 import eu.antoinepurnelle.ui.components.atoms.gradientBackground
+import eu.antoinepurnelle.ui.components.molecules.Pill
 import eu.antoinepurnelle.ui.components.molecules.QuickAction
 import eu.antoinepurnelle.ui.components.molecules.SectionCard
 import eu.antoinepurnelle.ui.components.molecules.SubSectionsCard
@@ -54,6 +58,8 @@ import eu.antoinepurnelle.ui.components.molecules.cardDecoration
 import eu.antoinepurnelle.ui.components.organisms.model.SectionCardItemModel
 import eu.antoinepurnelle.ui.components.organisms.model.SubSectionModel
 import eu.antoinepurnelle.ui.theme.Dimens.Padding
+import eu.antoinepurnelle.ui.theme.Dimens.Padding.SpacerDefault
+import eu.antoinepurnelle.ui.theme.Dimens.Padding.SpacerSmall
 import eu.antoinepurnelle.ui.theme.Dimens.Size
 import eu.antoinepurnelle.ui.theme.colors
 import jobapplication.composeapp.generated.resources.Res
@@ -85,7 +91,7 @@ private fun LoadingView() = Column(
         .gradientBackground(),
 ) {
     CircularProgressIndicator()
-    Spacer(modifier = Modifier.height(Padding.SpacerLarge))
+    VerticalSpacerLarge()
     Text(text = "Loading...", style = typography.bodyLarge, color = colors.text.main)
 }
 
@@ -121,7 +127,6 @@ internal fun HeaderView(
     header: Header,
 ) = Column(
     modifier = Modifier.cardDecoration().fillMaxWidth(),
-    verticalArrangement = spacedBy(Padding.SpacerDefault),
     horizontalAlignment = CenterHorizontally,
 ) {
     val context = getContext()
@@ -135,13 +140,44 @@ internal fun HeaderView(
                 .clip(RoundedCornerShapeDefault),
         )
     }
+
+    VerticalSpacer()
+
     Text(text = header.name, style = typography.headlineSmall, color = colors.text.main)
+    FlowRow(
+        horizontalArrangement = spacedBy(SpacerDefault, alignment = CenterHorizontally),
+        verticalArrangement = spacedBy(SpacerDefault),
+    ) {
+        header.location?.let {
+            Text(text = header.location, style = typography.titleSmall, color = colors.text.main)
+        }
+        header.dateOfBirth?.let {
+            if (header.location != null) {
+                Text(text = "•", style = typography.titleSmall, color = colors.text.main) // TODO #9 i18l
+            }
+            Text(text = it, style = typography.titleSmall, color = colors.text.main)
+        }
+    }
+
+    HorizontalDiv(modifier = Modifier.padding(vertical = SpacerDefault))
+
     Text(text = header.headline, style = typography.titleLarge, color = colors.text.main)
-    header.location?.let { Text(text = header.location, style = typography.titleMedium, color = colors.text.main) }
+    if (header.mainSkills.isNotEmpty()) {
+        VerticalSpacerSmall()
+        FlowRow(
+            horizontalArrangement = spacedBy(SpacerDefault, alignment = CenterHorizontally),
+            verticalArrangement = spacedBy(SpacerSmall),
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            header.mainSkills.forEach { skill -> Pill(model = skill) }
+        }
+    }
+
+    HorizontalDiv(modifier = Modifier.padding(vertical = SpacerDefault))
 
     FlowRow(
-        horizontalArrangement = spacedBy(Padding.SpacerDefault, alignment = CenterHorizontally),
-        verticalArrangement = spacedBy(Padding.SpacerDefault),
+        horizontalArrangement = spacedBy(SpacerDefault, alignment = CenterHorizontally),
+        verticalArrangement = spacedBy(SpacerDefault),
         modifier = Modifier.fillMaxWidth(),
     ) {
         QuickAction(

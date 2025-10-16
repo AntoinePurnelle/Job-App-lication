@@ -30,12 +30,13 @@ data class Colors(
         val gradientEnd: Color,
 
         val divider: Color,
+        val border: Color = divider,
 
         val buttonBackground: Color,
+        val pillBackground: Color,
 
         val card: CardsColors,
     ) {
-
         data class CardsColors(
             val background: Color,
             val shadow: Color,
@@ -59,6 +60,7 @@ val LightColors = Colors(
         gradientEnd = Color(0xFFB2EBF2), // lighter cyan
         divider = Color(0xFFE9EDF2), // light grey
         buttonBackground = Color(0xFFFFDAB0), // Light apricot/peach orange
+        pillBackground = Color(0xFFF5F7FA), // Very light grey
         card = CardsColors(
             background = Color.White,
             shadow = Color(0x1A101828),
@@ -77,6 +79,7 @@ val DarkColors = Colors(
         gradientEnd = Color(0xFF131A56), // Dark blue
         divider = Color(0xFF2D333B), // Darker grey
         buttonBackground = Color(0xFFCF7F53), // Deeper orange-brown
+        pillBackground = Color(0xFF2D333B), // Darker grey
         card = CardsColors(
             background = Color(0xFF1B1E26), // Dark grey
             shadow = Color.Transparent,

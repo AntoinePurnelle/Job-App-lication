@@ -20,7 +20,7 @@ import java.util.Locale
 import kotlinx.datetime.LocalDate
 
 actual fun formatLocalDate(date: LocalDate): String {
-    val sdf = SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
+    val sdf = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM, Locale.getDefault())
     val cal = Calendar.getInstance().apply {
         set(Calendar.YEAR, date.year)
         set(Calendar.MONTH, date.month.ordinal)

@@ -19,12 +19,13 @@ import kotlinx.datetime.number
 import platform.Foundation.NSCalendar
 import platform.Foundation.NSDateComponents
 import platform.Foundation.NSDateFormatter
+import platform.Foundation.NSDateFormatterMediumStyle
 import platform.Foundation.NSLocale
 import platform.Foundation.currentLocale
 
 actual fun formatLocalDate(date: LocalDate): String {
     val formatter = NSDateFormatter()
-    formatter.dateFormat = "MMM d, yyyy"
+    formatter.dateStyle = NSDateFormatterMediumStyle
     formatter.locale = NSLocale.currentLocale
     val nsDate = NSDateComponents().apply {
         year = date.year.toLong()

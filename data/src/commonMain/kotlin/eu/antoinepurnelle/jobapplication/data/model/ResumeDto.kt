@@ -37,7 +37,14 @@ data class ResumeDto(
             val emailAddress: String? = null,
             val linkedIn: String? = null,
             val github: String? = null,
-        )
+            val mainSkills: List<MainSkillDto> = emptyList(),
+        ) {
+            @Serializable
+            data class MainSkillDto(
+                val name: String? = null,
+                val pictureUrl: String? = null,
+            )
+        }
 
         @Serializable
         data class ExperienceDto(

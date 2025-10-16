@@ -12,15 +12,9 @@
 * limitations under the License.
 */
 
-package eu.antoinepurnelle.jobapplication.util
+package eu.antoinepurnelle.ui.components.molecules.model
 
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
-import java.util.Locale
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.number
-
-actual fun formatLocalDate(date: LocalDate): String {
-    val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(Locale.getDefault())
-    return java.time.LocalDate.of(date.year, date.month.number, date.day).format(formatter)
-}
+data class PillModel(
+    val label: String,
+    val iconUrl: String? = null,
+)

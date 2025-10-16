@@ -26,6 +26,7 @@ object Dimens {
         val CardVerticalHalf = CardVertical / 2
 
         val SpacerDefault = 16.dp
+        val SpacerSmall = 8.dp
         val SpacerContent = 2.dp
         val SpacerLarge = 24.dp
 
@@ -42,8 +43,10 @@ object Dimens {
         val ElevationDefault = 4.dp
 
         val IconDefault = 24.dp
+        val IconSmall = 16.dp
 
         val DividerThickness = 1.dp
+        val BorderWidth = 1.dp
     }
 
 }

@@ -19,6 +19,7 @@ import eu.antoinepurnelle.jobapplication.domain.model.UiModel
 import eu.antoinepurnelle.jobapplication.domain.transformer.MainPageUiTransformer
 import eu.antoinepurnelle.jobapplication.mainscreen.model.MainPageUiModel
 import eu.antoinepurnelle.jobapplication.util.formatLocalDate
+import eu.antoinepurnelle.ui.components.molecules.model.PillModel
 import eu.antoinepurnelle.ui.components.organisms.model.SectionCardItemModel
 import eu.antoinepurnelle.ui.components.organisms.model.SubSectionModel
 
@@ -35,6 +36,12 @@ class MainPageUiTransformerImpl : MainPageUiTransformer {
             emailAddress = model.mainInfo.emailAddress,
             linkedIn = model.mainInfo.linkedIn,
             github = model.mainInfo.github,
+            mainSkills = model.mainInfo.mainSkills.map {
+                PillModel(
+                    label = it.name,
+                    iconUrl = it.pictureUrl,
+                )
+            },
         ),
         experiences = model.experiences.map {
             SectionCardItemModel(

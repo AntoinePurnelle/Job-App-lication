@@ -25,6 +25,7 @@ import eu.antoinepurnelle.jobapplication.domain.model.Resume.Education.Course
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.Education.Diploma
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.Experience
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.MainInfo
+import eu.antoinepurnelle.jobapplication.domain.model.Resume.MainInfo.MainSkill
 import eu.antoinepurnelle.jobapplication.domain.model.TransformationFailure
 
 fun interface ResumeDtoTransformer {
@@ -72,6 +73,14 @@ class ResumeDtoTransformerImpl : ResumeDtoTransformer {
             emailAddress = email,
             linkedIn = mainInfoDto.linkedIn,
             github = mainInfoDto.github,
+            mainSkills = mainInfoDto.mainSkills.mapNotNull { skillDto ->
+                skillDto.name?.let { skillName ->
+                    MainSkill(
+                        name = skillName,
+                        pictureUrl = skillDto.pictureUrl,
+                    )
+                }
+            },
         )
     }
 

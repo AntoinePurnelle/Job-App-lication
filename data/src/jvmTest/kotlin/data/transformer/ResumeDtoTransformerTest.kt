@@ -136,6 +136,19 @@ class ResumeDtoTransformerTest {
     private val linkedIn = faker.internet().url()
     private val github = faker.internet().url()
 
+    // Main Skills
+    // Full -> OK
+    private val skill1Name = faker.job().keySkills()
+    private val skill1PictureUrl = faker.internet().url()
+
+    // Necessary only -> OK
+    private val skill2Name = faker.job().keySkills()
+    private val skill2PictureUrl: String? = null
+
+    // Missing name -> KO
+    private val skill3Name: String? = null
+    private val skill3PictureUrl = faker.internet().url()
+
     // Experience
     // Full -> OK
     private val exp1Title = faker.job().title()
@@ -300,6 +313,20 @@ class ResumeDtoTransformerTest {
         emailAddress = emailAddress.takeIf { hasEmailAddress },
         linkedIn = linkedIn,
         github = github,
+        mainSkills = listOf(
+            MainInfoDto.MainSkillDto(
+                name = skill1Name,
+                pictureUrl = skill1PictureUrl,
+            ),
+            MainInfoDto.MainSkillDto(
+                name = skill2Name,
+                pictureUrl = skill2PictureUrl,
+            ),
+            MainInfoDto.MainSkillDto(
+                name = skill3Name,
+                pictureUrl = skill3PictureUrl,
+            ),
+        ),
     )
 
     private val mainInfo = MainInfo(
@@ -312,6 +339,16 @@ class ResumeDtoTransformerTest {
         emailAddress = emailAddress,
         linkedIn = linkedIn,
         github = github,
+        mainSkills = listOf(
+            MainInfo.MainSkill(
+                name = skill1Name,
+                pictureUrl = skill1PictureUrl,
+            ),
+            MainInfo.MainSkill(
+                name = skill2Name,
+                pictureUrl = skill2PictureUrl,
+            ),
+        ),
     )
 
     private val experienceDtos = listOf(

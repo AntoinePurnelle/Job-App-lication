@@ -24,6 +24,7 @@ import eu.antoinepurnelle.jobapplication.domain.model.Resume.MainInfo
 import eu.antoinepurnelle.jobapplication.domain.transformer.MainPageUiTransformer
 import eu.antoinepurnelle.jobapplication.mainscreen.model.MainPageUiModel
 import eu.antoinepurnelle.jobapplication.util.formatLocalDate
+import eu.antoinepurnelle.ui.components.molecules.model.PillModel
 import eu.antoinepurnelle.ui.components.organisms.model.SectionCardItemModel
 import eu.antoinepurnelle.ui.components.organisms.model.SubSectionModel
 import io.kotest.matchers.shouldBe
@@ -88,6 +89,15 @@ class MainPageUiTransformerTest {
     private val dateOfBirthDate = mockk<LocalDate>()
     private val linkedIn = faker.internet().url()
     private val github = faker.internet().url()
+
+    // Main Skills
+    // Full -> OK
+    private val skill1Name = faker.job().keySkills()
+    private val skill1PictureUrl = faker.internet().url()
+
+    // Necessary only -> OK
+    private val skill2Name = faker.job().keySkills()
+    private val skill2PictureUrl: String? = null
 
     // Experience
     // Full -> OK
@@ -166,6 +176,16 @@ class MainPageUiTransformerTest {
         emailAddress = emailAddress,
         linkedIn = linkedIn,
         github = github,
+        mainSkills = listOf(
+            MainInfo.MainSkill(
+                name = skill1Name,
+                pictureUrl = skill1PictureUrl,
+            ),
+            MainInfo.MainSkill(
+                name = skill2Name,
+                pictureUrl = skill2PictureUrl,
+            ),
+        ),
     )
 
     private val experience = listOf(
@@ -241,6 +261,16 @@ class MainPageUiTransformerTest {
             emailAddress = emailAddress,
             linkedIn = linkedIn,
             github = github,
+            mainSkills = listOf(
+                PillModel(
+                    label = skill1Name,
+                    iconUrl = skill1PictureUrl,
+                ),
+                PillModel(
+                    label = skill2Name,
+                    iconUrl = skill2PictureUrl,
+                ),
+            ),
         ),
         experiences = listOf(
             SectionCardItemModel(

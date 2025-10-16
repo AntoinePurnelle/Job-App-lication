@@ -15,6 +15,7 @@
 package eu.antoinepurnelle.jobapplication.mainscreen.model
 
 import eu.antoinepurnelle.jobapplication.domain.model.UiModel
+import eu.antoinepurnelle.ui.components.molecules.model.PillModel
 import eu.antoinepurnelle.ui.components.organisms.model.SectionCardItemModel
 import eu.antoinepurnelle.ui.components.organisms.model.SubSectionModel
 
@@ -33,5 +34,6 @@ data class MainPageUiModel(
         val emailAddress: String,
         val linkedIn: String? = null,
         val github: String? = null,
+        val mainSkills: List<PillModel> = emptyList(),
     )
 }

@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
@@ -33,6 +32,7 @@ import androidx.compose.ui.Alignment.Companion.Start
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
+import eu.antoinepurnelle.ui.components.atoms.HorizontalDiv
 import eu.antoinepurnelle.ui.components.atoms.RoundedCornerShapeDefault
 import eu.antoinepurnelle.ui.components.atoms.RoundedCornerShapeSmall
 import eu.antoinepurnelle.ui.components.atoms.UrlImage
@@ -40,7 +40,6 @@ import eu.antoinepurnelle.ui.components.organisms.model.SectionCardItemModel
 import eu.antoinepurnelle.ui.onClick
 import eu.antoinepurnelle.ui.theme.Dimens.Padding
 import eu.antoinepurnelle.ui.theme.Dimens.Size
-import eu.antoinepurnelle.ui.theme.Dimens.Size.DividerThickness
 import eu.antoinepurnelle.ui.theme.colors
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
@@ -99,11 +98,7 @@ fun SectionCardCell(
     }
 
     if (!isLast) {
-        HorizontalDivider(
-            color = colors.decor.divider,
-            thickness = DividerThickness,
-            modifier = Modifier.padding(horizontal = Padding.CardHorizontal),
-        )
+        HorizontalDiv()
     }
 }
 
