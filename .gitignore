@@ -27,10 +27,11 @@ deploymentTargetDropDown.xml
 render.experimental.xml
 .kotlin
 
-# Keystore files
+# Secrets & Keystore files
 *.jks
 *.keystore
 keystores/
+**/secrets/
 
 # Google Services (e.g. APIs or Firebase)
 google-services.json
@@ -50,7 +51,6 @@ google-services.json
 Pods/
 Podfile.lock
 *.xcuserstate
-*.xcassets
 DerivedData/
 *.ipapa
 

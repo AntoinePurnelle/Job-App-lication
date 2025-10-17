@@ -14,54 +14,90 @@
 
 package eu.antoinepurnelle.jobapplication
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import jobapplication.composeapp.generated.resources.Res
-import jobapplication.composeapp.generated.resources.compose_multiplatform
-import org.jetbrains.compose.resources.painterResource
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
+import eu.antoinepurnelle.jobapplication.Route.ExperienceDetailRoute
+import eu.antoinepurnelle.jobapplication.Route.MainScreenRoute
+import eu.antoinepurnelle.jobapplication.di.allModules
+import eu.antoinepurnelle.jobapplication.experience.ExperienceScreen
+import eu.antoinepurnelle.jobapplication.mainscreen.MainScreen
+import eu.antoinepurnelle.ui.components.atoms.gradientBackground
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.KoinApplication
+import kotlin.jvm.JvmSuppressWildcards
+import kotlin.reflect.KType
 
 @Composable
 @Preview
-fun App() {
+fun App() = KoinApplication(
+    application = {
+        modules(allModules)
+    },
+) {
     MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .background(brush = Brush.linearGradient(listOf(colors.gradientStart, colors.gradientEnd)))
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
+        Box(
+            modifier = Modifier.fillMaxSize().gradientBackground(),
         ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
+            val navController = rememberNavController()
+            val pilot = Pilot(navController)
+            NavHost(
+                navController = navController,
+                startDestination = MainScreenRoute,
+                enterTransition = {
+                    slideInHorizontally(
+                        initialOffsetX = { it },
+                        animationSpec = tween(300),
+                    )
+                },
+                exitTransition = {
+                    slideOutHorizontally(
+                        targetOffsetX = { -it },
+                        animationSpec = tween(300),
+                    )
+                },
+                popEnterTransition = {
+                    slideInHorizontally(
+                        initialOffsetX = { -it },
+                        animationSpec = tween(300),
+                    )
+                },
+                popExitTransition = {
+                    slideOutHorizontally(
+                        targetOffsetX = { it },
+                        animationSpec = tween(300),
+                    )
+                },
+            ) {
+                composable<MainScreenRoute> {
+                    MainScreen(pilot)
+                }
+                routeComposable<ExperienceDetailRoute> { route ->
+                    ExperienceScreen(route.experienceId, pilot)
                 }
             }
         }
     }
 }
+
+private inline fun <reified T : Route> NavGraphBuilder.routeComposable(
+    typeMap: Map<KType, @JvmSuppressWildcards NavType<*>> = emptyMap(),
+    noinline content: @Composable AnimatedContentScope.(T) -> Unit,
+) = composable<T>(
+    typeMap = typeMap,
+    content = { navBackStackEntry ->
+        content(navBackStackEntry.toRoute<T>())
+    },
+)

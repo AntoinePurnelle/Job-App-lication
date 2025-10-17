@@ -22,6 +22,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+    alias(libs.plugins.kotlinxSerialization)
 }
 
 kotlin {
@@ -58,16 +59,33 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.core.ktx)
+            implementation(libs.androidx.appcompat)
+            implementation(libs.kotlinx.coroutines.android)
+            implementation(libs.koin.android)
         }
         commonMain.dependencies {
+            implementation(libs.kotlinx.datetime)
+            // Compose
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+            // Lifecycle
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            // Koin
+            implementation(project.dependencies.platform(libs.koin.bom))
+            api(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel.nav)
+            // Modules
+            implementation(project(":data"))
+            implementation(project(":domain"))
+            implementation(project(":ui"))
+            implementation(project(":shared"))
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -76,6 +94,21 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
         }
+        jsMain.dependencies {
+            implementation(libs.kotlin.browser)
+        }
+
+        jvmTest {
+            dependencies {
+                implementation(libs.kotlin.test)
+                implementation(libs.kotest.assertions)
+                implementation(libs.mockk)
+                implementation(libs.junit)
+                implementation(libs.junitparams)
+                implementation(libs.datafaker)
+                implementation(libs.coroutines.test)
+            }
+        }
     }
 }
 
@@ -83,12 +116,18 @@ android {
     namespace = "eu.antoinepurnelle.jobapplication"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
+    sourceSets["main"].apply {
+        manifest.srcFile("src/androidMain/AndroidManifest.xml")
+        res.srcDirs("src/androidMain/res")
+        resources.srcDirs("build/generated/compose/resource/res/commonMain/resources")
+    }
+
     defaultConfig {
         applicationId = "eu.antoinepurnelle.jobapplication"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "0.2"
     }
     packaging {
         resources {
@@ -98,6 +137,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = true
+            isShrinkResources = true
         }
     }
     compileOptions {
