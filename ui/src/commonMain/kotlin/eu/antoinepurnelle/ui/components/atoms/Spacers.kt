@@ -16,12 +16,14 @@ package eu.antoinepurnelle.ui.components.atoms
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import eu.antoinepurnelle.ui.theme.Dimens.Padding.SpacerDefault
 import eu.antoinepurnelle.ui.theme.Dimens.Padding.SpacerLarge
 import eu.antoinepurnelle.ui.theme.Dimens.Padding.SpacerSmall
+import eu.antoinepurnelle.ui.theme.Dimens.Padding.SpacerXLarge
 
 /**
  * A vertical spacer with a customizable height. (default 16.dp)
@@ -39,6 +41,9 @@ fun VerticalSpacerSmall() {
     VerticalSpacer(height = SpacerSmall)
 }
 
+/**
+ * A 24.dp vertical spacer.
+ */
 @Composable
 fun VerticalSpacerLarge() {
     VerticalSpacer(height = SpacerLarge)
@@ -49,7 +54,7 @@ fun VerticalSpacerLarge() {
  */
 @Composable
 fun HorizontalSpacer(width: Dp = SpacerDefault) {
-    Spacer(modifier = Modifier.height(width))
+    Spacer(modifier = Modifier.width(width))
 }
 
 /**
@@ -58,4 +63,12 @@ fun HorizontalSpacer(width: Dp = SpacerDefault) {
 @Composable
 fun HorizontalSpacerSmall() {
     HorizontalSpacer(width = SpacerSmall)
+}
+
+/**
+ * A 32.dp horizontal spacer.
+ */
+@Composable
+fun HorizontalSpacerXLarge() {
+    HorizontalSpacer(width = SpacerXLarge)
 }

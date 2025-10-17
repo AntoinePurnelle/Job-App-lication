@@ -19,7 +19,7 @@ import eu.antoinepurnelle.ui.components.molecules.model.PillModel
 import eu.antoinepurnelle.ui.components.organisms.model.SectionCardItemModel
 import eu.antoinepurnelle.ui.components.organisms.model.SubSectionModel
 
-data class MainPageUiModel(
+data class MainUiModel(
     val header: Header,
     val experiences: List<SectionCardItemModel> = emptyList(),
     val education: List<SubSectionModel> = emptyList(),

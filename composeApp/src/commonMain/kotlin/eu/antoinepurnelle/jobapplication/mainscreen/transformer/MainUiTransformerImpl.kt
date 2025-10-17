@@ -16,17 +16,17 @@ package eu.antoinepurnelle.jobapplication.mainscreen.transformer
 
 import eu.antoinepurnelle.jobapplication.domain.model.Resume
 import eu.antoinepurnelle.jobapplication.domain.model.UiModel
-import eu.antoinepurnelle.jobapplication.domain.transformer.MainPageUiTransformer
-import eu.antoinepurnelle.jobapplication.mainscreen.model.MainPageUiModel
+import eu.antoinepurnelle.jobapplication.domain.transformer.MainUiTransformer
+import eu.antoinepurnelle.jobapplication.mainscreen.model.MainUiModel
 import eu.antoinepurnelle.jobapplication.util.formatLocalDate
 import eu.antoinepurnelle.ui.components.molecules.model.PillModel
 import eu.antoinepurnelle.ui.components.organisms.model.SectionCardItemModel
 import eu.antoinepurnelle.ui.components.organisms.model.SubSectionModel
 
-class MainPageUiTransformerImpl : MainPageUiTransformer {
+class MainUiTransformerImpl : MainUiTransformer {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : UiModel> transform(model: Resume): T = MainPageUiModel(
-        header = MainPageUiModel.Header(
+    override fun <T : UiModel> transform(model: Resume): T = MainUiModel(
+        header = MainUiModel.Header(
             name = model.mainInfo.name,
             headline = model.mainInfo.headline,
             pictureUrl = model.mainInfo.pictureUrl,
@@ -36,15 +36,16 @@ class MainPageUiTransformerImpl : MainPageUiTransformer {
             emailAddress = model.mainInfo.emailAddress,
             linkedIn = model.mainInfo.linkedIn,
             github = model.mainInfo.github,
-            mainSkills = model.mainInfo.mainSkills.map {
+            mainSkills = model.mainInfo.mainSkills.map { skill ->
                 PillModel(
-                    label = it.name,
-                    iconUrl = it.pictureUrl,
+                    label = skill.name,
+                    iconUrl = skill.pictureUrl,
                 )
             },
         ),
         experiences = model.experiences.map {
             SectionCardItemModel(
+                id = it.id,
                 title = it.title,
                 subtitle = it.company,
                 pictureUrl = it.pictureUrl,

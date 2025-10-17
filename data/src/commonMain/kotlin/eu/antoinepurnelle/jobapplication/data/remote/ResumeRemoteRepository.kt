@@ -30,10 +30,18 @@ class ResumeRemoteRepository(
     private val transformer: ResumeDtoTransformer,
 ) : ResumeRepository {
 
+    private var cache: Resume? = null
+
     override suspend fun getResume(): Result<Resume, Failure> = try {
         val response = client.getResume()
         when (response.status.value) {
-            in 200..299 -> transformer.transform(response.body<ResumeDto>())
+            in 200..299 -> {
+                val transformed = transformer.transform(response.body<ResumeDto>())
+                (transformed as? Result.Success)?.data?.let { resume ->
+                    cache = resume
+                }
+                transformed
+            }
             401 -> Result.Error(NetworkError.UNAUTHORIZED)
             408 -> Result.Error(NetworkError.REQUEST_TIMEOUT)
             409 -> Result.Error(NetworkError.CONFLICT)
@@ -50,6 +58,15 @@ class ResumeRemoteRepository(
         Result.Error(NetworkError.UNKNOWN)
     } catch (_: IOException) {
         Result.Error(NetworkError.UNKNOWN)
+    }
+
+    override fun getExperienceById(id: String): Result<Resume.Experience, Failure> {
+        val experience = cache?.experiences?.find { it.id == id }
+        return if (experience != null) {
+            Result.Success(experience)
+        } else {
+            Result.Error(NetworkError.UNKNOWN)
+        }
     }
 
 }

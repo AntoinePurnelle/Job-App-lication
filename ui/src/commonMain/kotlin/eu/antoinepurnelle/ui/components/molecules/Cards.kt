@@ -20,6 +20,8 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -139,18 +141,25 @@ fun SectionCard(
 fun SubSectionsCard(
     title: String,
     padding: PaddingValues = PaddingValues(),
-    subsections: List<SubSectionModel>,
-    fallbackPictureUrl: String,
+    subSections: List<SubSectionModel>,
+    fallbackPictureUrl: String? = null,
     itemTrailingIconRes: DrawableResource? = null,
+    scrollable: Boolean = false,
     onItemClick: ((SectionCardItemModel) -> Unit)? = null,
 ) {
-    if (subsections.any { it.items.isNotEmpty() }) {
+    if (subSections.any { it.items.isNotEmpty() }) {
         SectionCard(
             title = title,
             padding = padding,
         ) {
-            Column {
-                subsections.forEach { subsection ->
+            Column(
+                modifier = if (scrollable) {
+                    Modifier.verticalScroll(rememberScrollState())
+                } else {
+                    Modifier
+                },
+            ) {
+                subSections.forEach { subsection ->
                     SubSectionView(
                         title = subsection.title,
                         items = subsection.items,
@@ -172,7 +181,7 @@ fun SubSectionsCard(
 private fun SubSectionView(
     title: String,
     items: List<SectionCardItemModel>,
-    fallbackPictureUrl: String,
+    fallbackPictureUrl: String? = null,
     itemTrailingIconRes: DrawableResource? = null,
     onClick: ((SectionCardItemModel) -> Unit)?,
 ) {

@@ -12,23 +12,22 @@
 * limitations under the License.
 */
 
-package eu.antoinepurnelle.jobapplication.mainscreen
+package eu.antoinepurnelle.jobapplication.experience
 
 import eu.antoinepurnelle.jobapplication.Pilot
-import eu.antoinepurnelle.jobapplication.Route.ExperienceDetailRoute
 import eu.antoinepurnelle.jobapplication.domain.model.Failure
 import eu.antoinepurnelle.jobapplication.domain.model.Result
-import eu.antoinepurnelle.jobapplication.domain.usecase.FetchMainPageUseCase
-import eu.antoinepurnelle.jobapplication.mainscreen.MainScreenViewModel.MainUiState
-import eu.antoinepurnelle.jobapplication.mainscreen.MainScreenViewModel.MainUiState.Loaded
+import eu.antoinepurnelle.jobapplication.domain.usecase.GetExperiencePageUseCase
+import eu.antoinepurnelle.jobapplication.experience.ExperienceViewModel.ExperienceUiState
+import eu.antoinepurnelle.jobapplication.experience.model.ExperienceUiModel
 import eu.antoinepurnelle.jobapplication.mainscreen.model.MainUiModel
 import io.kotest.matchers.shouldBe
 import io.mockk.Runs
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.coVerifySequence
 import io.mockk.confirmVerified
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
@@ -44,17 +43,17 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class MainScreenViewModelTest {
+class ExperienceViewModelTest {
 
-    @MockK private lateinit var fetchMainPageUseCase: FetchMainPageUseCase
+    @MockK private lateinit var getExperiencePageUseCase: GetExperiencePageUseCase
     @MockK private lateinit var pilot: Pilot
 
-    private lateinit var viewModel: MainScreenViewModel
+    private lateinit var viewModel: ExperienceViewModel
     private val dispatcher: TestDispatcher = UnconfinedTestDispatcher()
 
     @BeforeTest
     fun setup() {
-        fetchMainPageUseCase = mockk()
+        getExperiencePageUseCase = mockk()
         pilot = mockk()
 
         Dispatchers.setMain(dispatcher)
@@ -62,28 +61,33 @@ class MainScreenViewModelTest {
 
     @AfterTest
     fun tearDown() {
-        confirmVerified(fetchMainPageUseCase, pilot)
+        confirmVerified(getExperiencePageUseCase, pilot)
         Dispatchers.resetMain()
     }
 
     @Test
-    fun `init - fetch success - should call fetchMainPageUseCase and set Loaded UiState`() {
+    fun `init - get success - should call getExperiencePageUseCase and set Loaded UiState`() {
         // GIVEN
         // THIS DATA
-        val uiModel = mockk<MainUiModel>()
-        val fetchResult = Result.Success(uiModel)
-        val expectedUiState = Loaded(uiModel)
+        val experienceId = "experienceId"
+        val uiModel = mockk<ExperienceUiModel>()
+        val getResult = Result.Success(uiModel)
+        val expectedUiState = ExperienceUiState.Loaded(uiModel)
 
         // THIS BEHAVIOR
-        coEvery { fetchMainPageUseCase<MainUiModel>() } returns fetchResult
+        coEvery { getExperiencePageUseCase<ExperienceUiModel>(experienceId) } returns getResult
 
         // WHEN
-        viewModel = MainScreenViewModel(pilot, fetchMainPageUseCase)
+        viewModel = ExperienceViewModel(
+            id = experienceId,
+            pilot = pilot,
+            getExperiencePage = getExperiencePageUseCase,
+        )
 
         // THEN
         // THIS SHOULD HAVE HAPPENED
         coVerify {
-            fetchMainPageUseCase<MainUiModel>()
+            getExperiencePageUseCase<MainUiModel>(experienceId)
         }
 
         // THIS SHOULD BE
@@ -91,26 +95,31 @@ class MainScreenViewModelTest {
     }
 
     @Test
-    fun `init - fetch failed - should call fetchMainPageUseCase and set Error UiState`() {
+    fun `init - get failed - should call getExperiencePageUseCase and set Error UiState`() {
         // GIVEN
         // THIS DATA
+        val experienceId = "experienceId"
         val failureMessage = "failure message"
         val error = object : Failure {
             override fun toString(): String = failureMessage
         }
-        val fetchResult = Result.Error(error)
-        val expectedUiState = MainUiState.Error(failureMessage)
+        val getResult = Result.Error(error)
+        val expectedUiState = ExperienceUiState.Error(failureMessage)
 
         // THIS BEHAVIOR
-        coEvery { fetchMainPageUseCase<MainUiModel>() } returns fetchResult
+        coEvery { getExperiencePageUseCase<ExperienceUiModel>(experienceId) } returns getResult
 
         // WHEN
-        viewModel = MainScreenViewModel(pilot, fetchMainPageUseCase)
+        viewModel = ExperienceViewModel(
+            id = experienceId,
+            pilot = pilot,
+            getExperiencePage = getExperiencePageUseCase,
+        )
 
         // THEN
         // THIS SHOULD HAVE HAPPENED
-        coVerifySequence {
-            fetchMainPageUseCase<MainUiModel>()
+        coVerify {
+            getExperiencePageUseCase<ExperienceUiModel>(experienceId)
         }
 
         // THIS SHOULD BE
@@ -118,39 +127,40 @@ class MainScreenViewModelTest {
     }
 
     private fun createViewModelAndDisregardInit() {
-        val uiModel = mockk<MainUiModel>()
-        val fetchResult = Result.Success(uiModel)
-        coEvery { fetchMainPageUseCase<MainUiModel>() } returns fetchResult
+        val experienceId = "experienceId"
+        val uiModel = mockk<ExperienceUiModel>()
+        val getResult = Result.Success(uiModel)
+        coEvery { getExperiencePageUseCase<ExperienceUiModel>(experienceId) } returns getResult
 
-        viewModel = MainScreenViewModel(pilot, fetchMainPageUseCase)
+        viewModel = ExperienceViewModel(
+            id = experienceId,
+            pilot = pilot,
+            getExperiencePage = getExperiencePageUseCase,
+        )
 
         clearAllMocks()
     }
 
     @Test
-    fun `onExperienceClick - should call pilot navigateTo with ExperienceDetailRoute`() {
+    fun `onBackPressed - should call pilot back`() {
         // GIVEN
         // THIS SETUP
         createViewModelAndDisregardInit()
 
-        // THIS DATA
-        val id = "experience-id"
-
         // THIS BEHAVIOR
-        coEvery { pilot.navigateTo(ExperienceDetailRoute(id)) } just Runs
+        every { pilot.back() } just Runs
 
         // WHEN
-        viewModel.onExperienceClick(id)
+        viewModel.onBackPressed()
 
         // THEN
         // THIS SHOULD HAVE HAPPENED
         verify {
-            pilot.navigateTo(ExperienceDetailRoute(id))
+            pilot.back()
         }
     }
 
-    private infix fun MainScreenViewModel.shouldHaveState(state: MainUiState) {
+    private infix fun ExperienceViewModel.shouldHaveState(state: ExperienceUiState) {
         this.uiState.value shouldBe state
     }
-
 }

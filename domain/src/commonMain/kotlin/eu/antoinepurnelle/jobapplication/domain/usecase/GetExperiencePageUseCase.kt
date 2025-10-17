@@ -18,22 +18,24 @@ import eu.antoinepurnelle.jobapplication.domain.model.Failure
 import eu.antoinepurnelle.jobapplication.domain.model.Result
 import eu.antoinepurnelle.jobapplication.domain.model.UiModel
 import eu.antoinepurnelle.jobapplication.domain.repository.ResumeRepository
-import eu.antoinepurnelle.jobapplication.domain.transformer.MainUiTransformer
+import eu.antoinepurnelle.jobapplication.domain.transformer.ExperienceUiTransformer
 
-interface FetchMainPageUseCase {
+interface GetExperiencePageUseCase {
     /**
-     * Fetches the main page data and transforms it into the desired UI model.
+     * Retrieves the experience data and transforms it into the desired UI model.
      *
      * @return A [Result] containing the transformed UI model on success, or a [Failure] on error.
      */
-    suspend operator fun <T : UiModel> invoke(): Result<T, Failure>
+    suspend operator fun <T : UiModel> invoke(id: String): Result<T, Failure>
 }
 
-class FetchMainPageUseCaseImpl(
+class GetExperiencePageUseCaseImpl(
     private val repository: ResumeRepository,
-    private val transformer: MainUiTransformer,
-) : FetchMainPageUseCase {
-    override suspend fun <T : UiModel> invoke(): Result<T, Failure> = when (val repoResult = repository.getResume()) {
+    private val transformer: ExperienceUiTransformer,
+) : GetExperiencePageUseCase {
+    override suspend fun <T : UiModel> invoke(
+        id: String,
+    ): Result<T, Failure> = when (val repoResult = repository.getExperienceById(id)) {
         is Result.Success -> {
             val uiModel: T = transformer.transform(repoResult.data)
             Result.Success(uiModel)

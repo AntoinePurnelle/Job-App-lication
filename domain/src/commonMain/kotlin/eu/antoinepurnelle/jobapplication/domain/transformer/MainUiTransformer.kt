@@ -12,21 +12,11 @@
 * limitations under the License.
 */
 
-package eu.antoinepurnelle.ui.components.organisms.model
+package eu.antoinepurnelle.jobapplication.domain.transformer
 
-import eu.antoinepurnelle.ui.components.molecules.model.PillModel
+import eu.antoinepurnelle.jobapplication.domain.model.Resume
+import eu.antoinepurnelle.jobapplication.domain.model.UiModel
 
-data class SectionCardItemModel(
-    val id: String = "",
-    val title: String,
-    val subtitle: String? = null,
-    val description: String? = null,
-    val date: String? = null,
-    val pictureUrl: String? = null,
-    val pills: List<PillModel> = emptyList(),
-)
-
-data class SubSectionModel(
-    val title: String,
-    val items: List<SectionCardItemModel>,
-)
+interface MainUiTransformer {
+    fun <T : UiModel> transform(model: Resume): T
+}

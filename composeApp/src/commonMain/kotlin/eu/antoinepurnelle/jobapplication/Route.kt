@@ -12,11 +12,14 @@
 * limitations under the License.
 */
 
-package eu.antoinepurnelle.jobapplication.domain.transformer
+package eu.antoinepurnelle.jobapplication
 
-import eu.antoinepurnelle.jobapplication.domain.model.Resume
-import eu.antoinepurnelle.jobapplication.domain.model.UiModel
+import kotlinx.serialization.Serializable
 
-interface MainPageUiTransformer {
-    fun <T : UiModel> transform(model: Resume): T
+@Serializable
+sealed interface Route {
+    @Serializable
+    object MainScreenRoute : Route
+    @Serializable
+    data class ExperienceDetailRoute(val experienceId: String) : Route
 }

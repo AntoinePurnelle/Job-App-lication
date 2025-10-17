@@ -25,6 +25,7 @@ data class ResumeDto(
         val mainInfo: MainInfoDto? = null,
         val experiences: List<ExperienceDto> = emptyList(),
         val education: EducationDto? = null,
+        val skills: List<SkillDto> = emptyList(),
     ) {
         @Serializable
         data class MainInfoDto(
@@ -37,23 +38,26 @@ data class ResumeDto(
             val emailAddress: String? = null,
             val linkedIn: String? = null,
             val github: String? = null,
-            val mainSkills: List<MainSkillDto> = emptyList(),
-        ) {
-            @Serializable
-            data class MainSkillDto(
-                val name: String? = null,
-                val pictureUrl: String? = null,
-            )
-        }
+            val mainSkills: List<String> = emptyList(),
+        )
 
         @Serializable
         data class ExperienceDto(
+            val id: String? = null,
             val title: String? = null,
             val company: String? = null,
             val pictureUrl: String? = null,
             val startDate: String? = null,
             val endDate: String? = null,
-        )
+            val positions: List<PositionDto> = emptyList(),
+        ) {
+            @Serializable
+            data class PositionDto(
+                val title: String? = null,
+                val description: String? = null,
+                val skills: List<String> = emptyList(),
+            )
+        }
 
         @Serializable
         data class EducationDto(
@@ -85,5 +89,12 @@ data class ResumeDto(
                 val pictureUrl: String? = null,
             )
         }
+
+        @Serializable
+        data class SkillDto(
+            val id: String? = null,
+            val name: String? = null,
+            val pictureUrl: String? = null,
+        )
     }
 }

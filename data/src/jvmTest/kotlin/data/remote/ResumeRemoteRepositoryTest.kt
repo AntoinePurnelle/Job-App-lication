@@ -21,12 +21,14 @@ import eu.antoinepurnelle.jobapplication.data.transformer.ResumeDtoTransformer
 import eu.antoinepurnelle.jobapplication.domain.model.NetworkError
 import eu.antoinepurnelle.jobapplication.domain.model.Result
 import eu.antoinepurnelle.jobapplication.domain.model.Resume
+import eu.antoinepurnelle.jobapplication.domain.model.Resume.Experience
 import eu.antoinepurnelle.jobapplication.domain.model.TransformationFailure
 import eu.antoinepurnelle.jobapplication.domain.repository.ResumeRepository
 import io.kotest.matchers.shouldBe
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
+import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.confirmVerified
@@ -50,6 +52,9 @@ class ResumeRemoteRepositoryTest {
 
     private lateinit var repository: ResumeRepository
 
+    private val resume = mockk<Resume>()
+    private val experience = mockk<Experience>()
+
     @BeforeTest
     fun setup() {
         client = mockk()
@@ -66,7 +71,7 @@ class ResumeRemoteRepositoryTest {
     @Suppress("unused", "UnusedPrivateMember")
     private fun getTransformerResultParams() = arrayOf(
         arrayOf(Result.Error(TransformationFailure)),
-        arrayOf(Result.Success(mockk<Resume>())),
+        arrayOf(Result.Success(resume)),
     )
 
     @Test
@@ -162,6 +167,77 @@ class ResumeRemoteRepositoryTest {
         // THIS SHOULD HAVE HAPPENED
         coVerify { client.getResume() }
 
+        // THIS SHOULD BE
+        result shouldBe expected
+    }
+
+    private suspend fun fetchResumeAndDisregard() {
+        val httpResponse = mockk<HttpResponse>()
+        val resumeDto = mockk<ResumeDto>()
+        coEvery { client.getResume() } returns httpResponse
+        coEvery { httpResponse.status } returns HttpStatusCode.OK
+        coEvery { httpResponse.body<ResumeDto>() } returns resumeDto
+        coEvery { transformer.transform(resumeDto) } returns Result.Success(resume)
+
+        repository.getResume()
+
+        clearAllMocks()
+    }
+
+    @Test
+    fun `getExperienceById - experience in cache - should return Success with experience`() = runTest {
+        // GIVEN
+        // THIS SETUP
+        fetchResumeAndDisregard()
+
+        // THIS DATA
+        val experienceId = "experience-id"
+        val expected = Result.Success(experience)
+
+        // THIS BEHAVIOR
+        coEvery { resume.experiences } returns listOf(experience)
+        coEvery { experience.id } returns experienceId
+
+        // WHEN
+        val result = repository.getExperienceById(experienceId)
+
+        // THEN
+        // THIS SHOULD BE
+        result shouldBe expected
+    }
+
+    @Test
+    fun `getExperienceById - experience not in cache - should return Error with UNKNOWN NetworkError`() = runTest {
+        // GIVEN
+        // THIS SETUP
+        fetchResumeAndDisregard()
+
+        // THIS DATA
+        val experienceId = "experience-id"
+        val expected = Result.Error(NetworkError.UNKNOWN)
+
+        // THIS BEHAVIOR
+        coEvery { resume.experiences } returns emptyList()
+
+        // WHEN
+        val result = repository.getExperienceById(experienceId)
+
+        // THEN
+        // THIS SHOULD BE
+        result shouldBe expected
+    }
+
+    @Test
+    fun `getExperienceById - cache not initialized - should return Error with UNKNOWN NetworkError`() = runTest {
+        // GIVEN
+        // THIS DATA
+        val experienceId = "experience-id"
+        val expected = Result.Error(NetworkError.UNKNOWN)
+
+        // WHEN
+        val result = repository.getExperienceById(experienceId)
+
+        // THEN
         // THIS SHOULD BE
         result shouldBe expected
     }

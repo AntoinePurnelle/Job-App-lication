@@ -16,6 +16,7 @@ package eu.antoinepurnelle.jobapplication.data.transformer
 
 import eu.antoinepurnelle.jobapplication.data.model.ResumeDto
 import eu.antoinepurnelle.jobapplication.data.model.ResumeDto.ResumeWrapperDto
+import eu.antoinepurnelle.jobapplication.data.model.ResumeDto.ResumeWrapperDto.SkillDto
 import eu.antoinepurnelle.jobapplication.domain.model.Failure
 import eu.antoinepurnelle.jobapplication.domain.model.Result
 import eu.antoinepurnelle.jobapplication.domain.model.Resume
@@ -24,8 +25,9 @@ import eu.antoinepurnelle.jobapplication.domain.model.Resume.Education.Conferenc
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.Education.Course
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.Education.Diploma
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.Experience
+import eu.antoinepurnelle.jobapplication.domain.model.Resume.Experience.Position
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.MainInfo
-import eu.antoinepurnelle.jobapplication.domain.model.Resume.MainInfo.MainSkill
+import eu.antoinepurnelle.jobapplication.domain.model.Resume.Skill
 import eu.antoinepurnelle.jobapplication.domain.model.TransformationFailure
 
 fun interface ResumeDtoTransformer {
@@ -73,29 +75,35 @@ class ResumeDtoTransformerImpl : ResumeDtoTransformer {
             emailAddress = email,
             linkedIn = mainInfoDto.linkedIn,
             github = mainInfoDto.github,
-            mainSkills = mainInfoDto.mainSkills.mapNotNull { skillDto ->
-                skillDto.name?.let { skillName ->
-                    MainSkill(
-                        name = skillName,
-                        pictureUrl = skillDto.pictureUrl,
-                    )
-                }
-            },
+            mainSkills = transformSkills(mainInfoDto.mainSkills, record.skills),
         )
     }
 
     private fun transformExperiences(record: ResumeWrapperDto): List<Experience> {
         return record.experiences.mapNotNull { expDto ->
+            val id = expDto.id ?: return@mapNotNull null
             val title = expDto.title ?: return@mapNotNull null
             val company = expDto.company ?: return@mapNotNull null
             val startDate = expDto.startDate?.let { LocalDateParser.parse(it) } ?: return@mapNotNull null
+            val positions = expDto.positions.mapNotNull { posDto ->
+                val posTitle = posDto.title ?: return@mapNotNull null
+                val description = posDto.description ?: return@mapNotNull null
+
+                Position(
+                    title = posTitle,
+                    description = description,
+                    skills = transformSkills(posDto.skills, record.skills),
+                )
+            }
 
             Experience(
+                id = id,
                 title = title,
                 company = company,
                 pictureUrl = expDto.pictureUrl,
                 startDate = startDate,
                 endDate = expDto.endDate?.let { LocalDateParser.parse(it) },
+                positions = positions,
             )
         }
     }
@@ -140,6 +148,22 @@ class ResumeDtoTransformerImpl : ResumeDtoTransformer {
         } ?: emptyList()
 
         return Education(diplomas, courses, conferences)
+    }
+
+    private fun transformSkills(
+        ids: List<String>,
+        skillsList: List<SkillDto>,
+    ): List<Skill> = ids.map { id ->
+        transformSkill(id, skillsList)
+    }
+
+    private fun transformSkill(id: String, skillsList: List<SkillDto>): Skill {
+        val skillDto = skillsList.find { it.id == id }
+
+        return Skill(
+            name = skillDto?.name ?: id,
+            pictureUrl = skillDto?.pictureUrl,
+        )
     }
 
     private fun getError() = Result.Error(TransformationFailure)

@@ -16,13 +16,12 @@ package eu.antoinepurnelle.jobapplication.domain.usecase
 
 import eu.antoinepurnelle.jobapplication.domain.model.Failure
 import eu.antoinepurnelle.jobapplication.domain.model.Result
-import eu.antoinepurnelle.jobapplication.domain.model.Resume
+import eu.antoinepurnelle.jobapplication.domain.model.Resume.Experience
 import eu.antoinepurnelle.jobapplication.domain.model.UiModel
 import eu.antoinepurnelle.jobapplication.domain.repository.ResumeRepository
-import eu.antoinepurnelle.jobapplication.domain.transformer.MainUiTransformer
+import eu.antoinepurnelle.jobapplication.domain.transformer.ExperienceUiTransformer
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.coVerifySequence
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -33,19 +32,19 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class FetchMainPageUseCaseTest {
+class GetExperiencePageUseCaseTest {
 
     @MockK private lateinit var repository: ResumeRepository
-    @MockK private lateinit var transformer: MainUiTransformer
+    @MockK private lateinit var transformer: ExperienceUiTransformer
 
-    private lateinit var useCase: FetchMainPageUseCase
+    private lateinit var useCase: GetExperiencePageUseCase
 
     @BeforeTest
     fun setup() {
         repository = mockk()
         transformer = mockk()
 
-        useCase = FetchMainPageUseCaseImpl(repository, transformer)
+        useCase = GetExperiencePageUseCaseImpl(repository, transformer)
     }
 
     @AfterTest
@@ -57,23 +56,24 @@ class FetchMainPageUseCaseTest {
     fun `invoke - repo and transform success - should return success`(): Unit = runTest {
         // GIVEN
         // THIS DATA
-        val resume = mockk<Resume>()
-        val repoResult = Result.Success(resume)
+        val experienceId = "experienceId"
+        val experience = mockk<Experience>()
+        val repoResult = Result.Success(experience)
         val uiModel = mockk<UiModel>()
         val expected = Result.Success(uiModel)
 
         // THIS BEHAVIOR
-        coEvery { repository.getResume() } returns repoResult
-        every { transformer.transform<UiModel>(resume) } returns uiModel
+        coEvery { repository.getExperienceById(experienceId) } returns repoResult
+        every { transformer.transform<UiModel>(experience) } returns uiModel
 
         // WHEN
-        val result = useCase<UiModel>()
+        val result = useCase<UiModel>(experienceId)
 
         // THEN
         // THIS SHOULD HAVE HAPPENED
         coVerifySequence {
-            repository.getResume()
-            transformer.transform<UiModel>(resume)
+            repository.getExperienceById(experienceId)
+            transformer.transform<UiModel>(experience)
         }
 
         // THIS SHOULD BE
@@ -84,24 +84,24 @@ class FetchMainPageUseCaseTest {
     fun `invoke - repo error - should return error`(): Unit = runTest {
         // GIVEN
         // THIS DATA
+        val experienceId = "experienceId"
         val repoError = mockk<Failure>()
-        val repoResult: Result<Resume, Failure> = Result.Error(repoError)
+        val repoResult: Result<Experience, Failure> = Result.Error(repoError)
         val expected: Result<UiModel, Failure> = Result.Error(repoError)
 
         // THIS BEHAVIOR
-        coEvery { repository.getResume() } returns repoResult
+        coEvery { repository.getExperienceById(experienceId) } returns repoResult
 
         // WHEN
-        val result = useCase<UiModel>()
+        val result = useCase<UiModel>(experienceId)
 
         // THEN
         // THIS SHOULD HAVE HAPPENED
-        coVerify {
-            repository.getResume()
+        coVerifySequence {
+            repository.getExperienceById(experienceId)
         }
 
         // THIS SHOULD BE
         result shouldBe expected
     }
-
 }

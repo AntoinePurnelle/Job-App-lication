@@ -31,21 +31,24 @@ data class Resume(
         val emailAddress: String,
         val linkedIn: String?,
         val github: String?,
-        val mainSkills: List<MainSkill> = emptyList(),
-    ) {
-        data class MainSkill(
-            val name: String,
-            val pictureUrl: String?,
-        )
-    }
+        val mainSkills: List<Skill> = emptyList(),
+    )
 
     data class Experience(
+        val id: String,
         val title: String,
         val company: String,
         val pictureUrl: String?,
         val startDate: LocalDate,
         val endDate: LocalDate?,
-    )
+        val positions: List<Position> = emptyList(),
+    ) {
+        data class Position(
+            val title: String,
+            val description: String,
+            val skills: List<Skill> = emptyList(),
+        )
+    }
 
     data class Education(
         val diplomas: List<Diploma> = emptyList(),
@@ -73,4 +76,9 @@ data class Resume(
             val pictureUrl: String?,
         )
     }
+
+    data class Skill(
+        val name: String,
+        val pictureUrl: String?,
+    )
 }

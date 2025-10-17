@@ -14,9 +14,12 @@
 
 package eu.antoinepurnelle.jobapplication.di
 
-import eu.antoinepurnelle.jobapplication.domain.transformer.MainPageUiTransformer
+import eu.antoinepurnelle.jobapplication.domain.transformer.ExperienceUiTransformer
+import eu.antoinepurnelle.jobapplication.domain.transformer.MainUiTransformer
+import eu.antoinepurnelle.jobapplication.experience.ExperienceViewModel
+import eu.antoinepurnelle.jobapplication.experience.transformer.ExperienceUiTransformerImpl
 import eu.antoinepurnelle.jobapplication.mainscreen.MainScreenViewModel
-import eu.antoinepurnelle.jobapplication.mainscreen.transformer.MainPageUiTransformerImpl
+import eu.antoinepurnelle.jobapplication.mainscreen.transformer.MainUiTransformerImpl
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.viewModelOf
@@ -24,5 +27,7 @@ import org.koin.dsl.module
 
 val screensModule = module {
     viewModelOf(::MainScreenViewModel)
-    factoryOf(::MainPageUiTransformerImpl) { bind<MainPageUiTransformer>() }
+    factoryOf(::MainUiTransformerImpl) { bind<MainUiTransformer>() }
+    viewModelOf(::ExperienceViewModel)
+    factoryOf(::ExperienceUiTransformerImpl) { bind<ExperienceUiTransformer>() }
 }

@@ -12,51 +12,50 @@
 * limitations under the License.
 */
 
-package eu.antoinepurnelle.jobapplication.mainscreen
+package eu.antoinepurnelle.jobapplication.experience
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import eu.antoinepurnelle.jobapplication.Pilot
-import eu.antoinepurnelle.jobapplication.Route.ExperienceDetailRoute
 import eu.antoinepurnelle.jobapplication.domain.model.Result
-import eu.antoinepurnelle.jobapplication.domain.usecase.FetchMainPageUseCase
-import eu.antoinepurnelle.jobapplication.mainscreen.MainScreenViewModel.MainUiState.Loading
-import eu.antoinepurnelle.jobapplication.mainscreen.model.MainUiModel
+import eu.antoinepurnelle.jobapplication.domain.usecase.GetExperiencePageUseCase
+import eu.antoinepurnelle.jobapplication.experience.model.ExperienceUiModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class MainScreenViewModel(
+class ExperienceViewModel(
+    id: String,
     private val pilot: Pilot,
-    fetchMainPage: FetchMainPageUseCase,
-) : ViewModel(), MainCallback {
+    getExperiencePage: GetExperiencePageUseCase,
+) : ViewModel(), ExperienceCallback {
 
-    private val _uiState = MutableStateFlow<MainUiState>(Loading)
+    private val _uiState = MutableStateFlow<ExperienceUiState>(ExperienceUiState.Loading)
     val uiState = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
-            _uiState.value = when (val result = fetchMainPage<MainUiModel>()) {
+            _uiState.value = when (val result = getExperiencePage<ExperienceUiModel>(id)) {
                 is Result.Success -> {
-                    MainUiState.Loaded(result.data)
+                    ExperienceUiState.Loaded(result.data)
                 }
                 is Result.Error -> {
-                    MainUiState.Error(result.error.toString()) // TODO better handle errors
+                    ExperienceUiState.Error(result.error.toString()) // TODO better handle errors
                 }
             }
         }
     }
 
-    override fun onExperienceClick(id: String) = pilot.navigateTo(ExperienceDetailRoute(id))
+    override fun onBackPressed() = pilot.back()
 
-    sealed interface MainUiState {
-        data object Loading : MainUiState
-        data class Loaded(val data: MainUiModel) : MainUiState
-        data class Error(val message: String) : MainUiState
+    sealed interface ExperienceUiState {
+        data object Loading : ExperienceUiState
+        data class Error(val message: String) : ExperienceUiState
+        data class Loaded(val data: ExperienceUiModel) : ExperienceUiState
     }
 
 }
 
-fun interface MainCallback {
-    fun onExperienceClick(id: String)
+fun interface ExperienceCallback {
+    fun onBackPressed()
 }

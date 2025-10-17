@@ -36,6 +36,8 @@ import eu.antoinepurnelle.ui.components.atoms.HorizontalDiv
 import eu.antoinepurnelle.ui.components.atoms.RoundedCornerShapeDefault
 import eu.antoinepurnelle.ui.components.atoms.RoundedCornerShapeSmall
 import eu.antoinepurnelle.ui.components.atoms.UrlImage
+import eu.antoinepurnelle.ui.components.atoms.VerticalSpacer
+import eu.antoinepurnelle.ui.components.molecules.PillsGroup
 import eu.antoinepurnelle.ui.components.organisms.model.SectionCardItemModel
 import eu.antoinepurnelle.ui.onClick
 import eu.antoinepurnelle.ui.theme.Dimens.Padding
@@ -49,7 +51,7 @@ fun SectionCardCell(
     item: SectionCardItemModel,
     isFirst: Boolean,
     isLast: Boolean,
-    fallbackPictureUrl: String,
+    fallbackPictureUrl: String? = null,
     trailingIconRes: DrawableResource? = null,
     onClick: (() -> Unit)? = null,
 ) {
@@ -69,31 +71,41 @@ fun SectionCardCell(
     }
     val padding = PaddingValues(top = top, bottom = bottom, start = Padding.CardHorizontal, end = Padding.CardHorizontal)
 
-    Row(
-        verticalAlignment = CenterVertically,
-        horizontalArrangement = spacedBy(Padding.SpacerDefault),
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .clip(shape)
             .onClick(onClick)
             .padding(padding),
     ) {
-        UrlImage(
-            url = item.pictureUrl ?: fallbackPictureUrl,
-            contentDescription = item.title,
-            modifier = Modifier
-                .size(Size.CompanyAvatar)
-                .clip(RoundedCornerShapeSmall),
-        )
+        if (item.pills.isNotEmpty()) {
+            PillsGroup(item.pills)
+            VerticalSpacer()
+        }
 
-        CellContent(item)
+        Row(
+            verticalAlignment = CenterVertically,
+            horizontalArrangement = spacedBy(Padding.SpacerDefault),
+        ) {
+            (item.pictureUrl ?: fallbackPictureUrl)?.let {
+                UrlImage(
+                    url = it,
+                    contentDescription = item.title,
+                    modifier = Modifier
+                        .size(Size.CompanyAvatar)
+                        .clip(RoundedCornerShapeSmall),
+                )
+            }
 
-        if (trailingIconRes != null) {
-            Icon(
-                painter = painterResource(trailingIconRes),
-                contentDescription = "See details for ${item.title} at ${item.subtitle}", // TODO #9 i18l
-                tint = colors.text.secondary,
-            )
+            CellContent(item)
+
+            if (trailingIconRes != null) {
+                Icon(
+                    painter = painterResource(trailingIconRes),
+                    contentDescription = "See details for ${item.title} at ${item.subtitle}", // TODO #9 i18l
+                    tint = colors.text.secondary,
+                )
+            }
         }
     }
 

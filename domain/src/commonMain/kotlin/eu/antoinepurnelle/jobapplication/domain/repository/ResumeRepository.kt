@@ -17,8 +17,9 @@ package eu.antoinepurnelle.jobapplication.domain.repository
 import eu.antoinepurnelle.jobapplication.domain.model.Failure
 import eu.antoinepurnelle.jobapplication.domain.model.Result
 import eu.antoinepurnelle.jobapplication.domain.model.Resume
+import eu.antoinepurnelle.jobapplication.domain.model.Resume.Experience
 
-fun interface ResumeRepository {
+interface ResumeRepository {
 
     /**
      * Fetch the resume from the repository.
@@ -26,5 +27,7 @@ fun interface ResumeRepository {
      * @return [Result] containing either the [Resume] on success or a [Failure] on failure.
      */
     suspend fun getResume(): Result<Resume, Failure>
+
+    fun getExperienceById(id: String): Result<Experience, Failure>
 
 }

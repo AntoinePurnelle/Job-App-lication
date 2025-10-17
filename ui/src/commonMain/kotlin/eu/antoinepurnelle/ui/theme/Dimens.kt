@@ -29,6 +29,7 @@ object Dimens {
         val SpacerSmall = 8.dp
         val SpacerContent = 2.dp
         val SpacerLarge = 24.dp
+        val SpacerXLarge = 32.dp
 
         val Icon = 12.dp
 

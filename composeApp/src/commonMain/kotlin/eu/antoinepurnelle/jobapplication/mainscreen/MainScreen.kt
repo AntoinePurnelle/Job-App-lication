@@ -14,9 +14,7 @@
 
 package eu.antoinepurnelle.jobapplication.mainscreen
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.spacedBy
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
@@ -28,38 +26,40 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import eu.antoinepurnelle.jobapplication.mainscreen.MainScreenViewModel.MainUiState
+import eu.antoinepurnelle.jobapplication.Pilot
+import eu.antoinepurnelle.jobapplication.mainscreen.MainScreenViewModel.MainUiState.Error
 import eu.antoinepurnelle.jobapplication.mainscreen.MainScreenViewModel.MainUiState.Loaded
-import eu.antoinepurnelle.jobapplication.mainscreen.model.MainPageUiModel.Header
+import eu.antoinepurnelle.jobapplication.mainscreen.MainScreenViewModel.MainUiState.Loading
+import eu.antoinepurnelle.jobapplication.mainscreen.model.MainUiModel
+import eu.antoinepurnelle.jobapplication.mainscreen.model.MainUiModel.Header
 import eu.antoinepurnelle.jobapplication.util.LaunchType
+import eu.antoinepurnelle.jobapplication.util.companyFallbackPictureUrl
+import eu.antoinepurnelle.jobapplication.util.educationFallbackPictureUrl
 import eu.antoinepurnelle.jobapplication.util.getContext
 import eu.antoinepurnelle.jobapplication.util.launch
 import eu.antoinepurnelle.ui.components.atoms.HorizontalDiv
 import eu.antoinepurnelle.ui.components.atoms.RoundedCornerShapeDefault
 import eu.antoinepurnelle.ui.components.atoms.UrlImage
 import eu.antoinepurnelle.ui.components.atoms.VerticalSpacer
-import eu.antoinepurnelle.ui.components.atoms.VerticalSpacerLarge
 import eu.antoinepurnelle.ui.components.atoms.VerticalSpacerSmall
-import eu.antoinepurnelle.ui.components.atoms.gradientBackground
-import eu.antoinepurnelle.ui.components.molecules.Pill
+import eu.antoinepurnelle.ui.components.molecules.PillsGroup
 import eu.antoinepurnelle.ui.components.molecules.QuickAction
 import eu.antoinepurnelle.ui.components.molecules.SectionCard
 import eu.antoinepurnelle.ui.components.molecules.SubSectionsCard
 import eu.antoinepurnelle.ui.components.molecules.cardDecoration
+import eu.antoinepurnelle.ui.components.organisms.ErrorView
+import eu.antoinepurnelle.ui.components.organisms.LoadingView
 import eu.antoinepurnelle.ui.components.organisms.model.SectionCardItemModel
 import eu.antoinepurnelle.ui.components.organisms.model.SubSectionModel
 import eu.antoinepurnelle.ui.theme.Dimens.Padding
 import eu.antoinepurnelle.ui.theme.Dimens.Padding.SpacerDefault
-import eu.antoinepurnelle.ui.theme.Dimens.Padding.SpacerSmall
 import eu.antoinepurnelle.ui.theme.Dimens.Size
 import eu.antoinepurnelle.ui.theme.colors
 import jobapplication.composeapp.generated.resources.Res
@@ -70,55 +70,34 @@ import jobapplication.composeapp.generated.resources.ic_github
 import jobapplication.composeapp.generated.resources.ic_linkedin
 import jobapplication.composeapp.generated.resources.ic_phone
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun MainScreen(
-    viewModel: MainScreenViewModel = koinViewModel(),
+    pilot: Pilot,
+    viewModel: MainScreenViewModel = koinViewModel(parameters = { parametersOf(pilot) }),
 ) {
     when (val state = viewModel.uiState.collectAsState().value) {
-        is MainUiState.Error -> ErrorView(state.message)
-        is MainUiState.Loading -> LoadingView()
-        is Loaded -> MainView(uiState = state)
+        is Error -> ErrorView(state.message)
+        is Loading -> LoadingView()
+        is Loaded -> MainView(state.data, viewModel)
     }
 }
 
 @Composable
-private fun LoadingView() = Column(
-    verticalArrangement = Arrangement.Center,
-    horizontalAlignment = CenterHorizontally,
-    modifier = Modifier
-        .fillMaxSize()
-        .gradientBackground(),
-) {
-    CircularProgressIndicator()
-    VerticalSpacerLarge()
-    Text(text = "Loading...", style = typography.bodyLarge, color = colors.text.main)
-}
-
-@Composable
-private fun ErrorView(message: String) = Box(
-    modifier = Modifier
-        .fillMaxSize()
-        .gradientBackground(),
-    contentAlignment = Alignment.Center,
-) {
-    Text(text = "An error occurred: $message", style = typography.bodyLarge, color = colors.text.main)
-}
-
-@Composable
 private fun MainView(
-    uiState: Loaded,
+    uiModel: MainUiModel,
+    callback: MainCallback,
 ) = Column(
     modifier = Modifier
         .fillMaxSize()
-        .gradientBackground()
         .verticalScroll(rememberScrollState())
         .statusBarsPadding()
         .padding(Padding.Screen),
 ) {
-    HeaderView(uiState.data.header)
-    ExperienceView(uiState.data.experiences)
-    EducationView(uiState.data.education)
+    HeaderView(uiModel.header)
+    ExperienceView(uiModel.experiences, callback)
+    EducationView(uiModel.education)
     Spacer(modifier = Modifier.navigationBarsPadding())
 }
 
@@ -164,13 +143,7 @@ internal fun HeaderView(
     Text(text = header.headline, style = typography.titleLarge, color = colors.text.main)
     if (header.mainSkills.isNotEmpty()) {
         VerticalSpacerSmall()
-        FlowRow(
-            horizontalArrangement = spacedBy(SpacerDefault, alignment = CenterHorizontally),
-            verticalArrangement = spacedBy(SpacerSmall),
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            header.mainSkills.forEach { skill -> Pill(model = skill) }
-        }
+        PillsGroup(header.mainSkills)
     }
 
     HorizontalDiv(modifier = Modifier.padding(vertical = SpacerDefault))
@@ -216,11 +189,12 @@ internal fun HeaderView(
 @Composable
 private fun ExperienceView(
     experiences: List<SectionCardItemModel>,
+    callback: MainCallback,
 ) = SectionCard(
     title = "Experience", // TODO #9 i18l
     items = experiences,
     fallbackPictureUrl = companyFallbackPictureUrl,
-    onItemClick = {}, // TODO #14
+    onItemClick = { callback.onExperienceClick(it.id) },
     itemTrailingIconRes = Res.drawable.ic_chevron_right,
 )
 
@@ -228,14 +202,7 @@ private fun ExperienceView(
 private fun EducationView(
     educations: List<SubSectionModel>,
 ) = SubSectionsCard(
-    subsections = educations,
+    subSections = educations,
     title = "Education", // TODO #9 i18l
     fallbackPictureUrl = educationFallbackPictureUrl,
 )
-
-@Suppress("MaxLineLength", "ktlint:standard:max-line-length")
-private val companyFallbackPictureUrl =
-    "https://lh3.googleusercontent.com/pw/AP1GczPflsoWG1nGNDb9eZTUWjTqn5T7b5bawH56HFUCccparCrBaLerr6XcptYZJjQbOSM-pRbA-criKuzPdgbo8tB9P7HT54oZdhnyUILOzBm8ogdYE-PN_zn1GE1ABHYIotTzr_Z4IDefMIUbFWOzBI3iWQ=w512-h512-s-no"
-@Suppress("MaxLineLength", "ktlint:standard:max-line-length")
-private val educationFallbackPictureUrl =
-    "https://lh3.googleusercontent.com/pw/AP1GczNFcByjtiixp31Mzd5cK9HFC7Z-RLlSEpXD2FXWQd8LtGnmicdCpA2CAyUfRsuIvKGkhmxmAlug8HN-nGTd10yDhwXGieso7tnEPpR_yboOUImOIigkbnKyxVffp1y1w_PCatCtv6rM0GH-iNH_eVfhPA=w512-h512-s-no"

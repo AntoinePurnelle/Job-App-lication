@@ -21,7 +21,9 @@ import eu.antoinepurnelle.jobapplication.data.model.ResumeDto.ResumeWrapperDto.E
 import eu.antoinepurnelle.jobapplication.data.model.ResumeDto.ResumeWrapperDto.EducationDto.CourseDto
 import eu.antoinepurnelle.jobapplication.data.model.ResumeDto.ResumeWrapperDto.EducationDto.DiplomaDto
 import eu.antoinepurnelle.jobapplication.data.model.ResumeDto.ResumeWrapperDto.ExperienceDto
+import eu.antoinepurnelle.jobapplication.data.model.ResumeDto.ResumeWrapperDto.ExperienceDto.PositionDto
 import eu.antoinepurnelle.jobapplication.data.model.ResumeDto.ResumeWrapperDto.MainInfoDto
+import eu.antoinepurnelle.jobapplication.data.model.ResumeDto.ResumeWrapperDto.SkillDto
 import eu.antoinepurnelle.jobapplication.data.transformer.LocalDateParser
 import eu.antoinepurnelle.jobapplication.data.transformer.ResumeDtoTransformer
 import eu.antoinepurnelle.jobapplication.data.transformer.ResumeDtoTransformerImpl
@@ -32,7 +34,9 @@ import eu.antoinepurnelle.jobapplication.domain.model.Resume.Education.Conferenc
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.Education.Course
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.Education.Diploma
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.Experience
+import eu.antoinepurnelle.jobapplication.domain.model.Resume.Experience.Position
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.MainInfo
+import eu.antoinepurnelle.jobapplication.domain.model.Resume.Skill
 import eu.antoinepurnelle.jobapplication.domain.model.TransformationFailure
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -138,19 +142,23 @@ class ResumeDtoTransformerTest {
 
     // Main Skills
     // Full -> OK
+    private val skill1Id = faker.idNumber().valid()
     private val skill1Name = faker.job().keySkills()
     private val skill1PictureUrl = faker.internet().url()
 
     // Necessary only -> OK
+    private val skill2Id = faker.idNumber().valid()
     private val skill2Name = faker.job().keySkills()
     private val skill2PictureUrl: String? = null
 
     // Missing name -> KO
+    private val skill3Id = faker.job().keySkills()
     private val skill3Name: String? = null
     private val skill3PictureUrl = faker.internet().url()
 
     // Experience
     // Full -> OK
+    private val exp1Id = "1"
     private val exp1Title = faker.job().title()
     private val exp1Company = faker.company().name()
     private val exp1PictureUrl = faker.internet().url()
@@ -158,16 +166,26 @@ class ResumeDtoTransformerTest {
     private val exp1StartDate = mockk<LocalDate>()
     private val exp1EndDateString = "2022-01-01"
     private val exp1EndDate = mockk<LocalDate>()
+    private val exp1Pos1Title = faker.job().title()
+    private val exp1Pos1Description = faker.lorem().paragraph()
+    private val exp1Pos2Title = faker.job().title()
+    private val exp1Pos2Description = faker.lorem().paragraph()
 
     // Necessary only -> OK
+    private val exp2Id = "2"
     private val exp2Title = faker.job().title()
     private val exp2Company = faker.company().name()
     private val exp2PictureUrl: String? = null
     private val exp2StartDateString = "2022-02-01"
     private val exp2StartDate = mockk<LocalDate>()
     private val exp2EndDateString: String? = null
+    private val exp2Pos1Title = faker.job().title()
+    private val exp2Pos1Description = null
+    private val exp2Pos2Title = null
+    private val exp2Pos2Description = faker.lorem().paragraph()
 
     // Missing title -> KO
+    private val exp3Id = "3"
     private val exp3Title: String? = null
     private val exp3Company = faker.company().name()
     private val exp3PictureUrl: String? = null
@@ -175,6 +193,7 @@ class ResumeDtoTransformerTest {
     private val exp3EndDateString: String? = null
 
     // Missing company -> KO
+    private val exp4Id = "4"
     private val exp4Title = faker.job().title()
     private val exp4Company: String? = null
     private val exp4PictureUrl: String? = null
@@ -182,11 +201,20 @@ class ResumeDtoTransformerTest {
     private val exp4EndDateString: String? = null
 
     // Missing start date -> KO
+    private val exp5Id = "5"
     private val exp5Title = faker.job().title()
     private val exp5Company = faker.company().name()
     private val exp5PictureUrl: String? = null
     private val exp5StartDateString: String? = null
     private val exp5EndDateString: String? = null
+
+    // Missing ID -> KO
+    private val exp6Id: String? = null
+    private val exp6Title = faker.job().title()
+    private val exp6Company = faker.company().name()
+    private val exp6PictureUrl: String? = null
+    private val exp6StartDateString = "2022-02-01"
+    private val exp6EndDateString: String? = null
 
     // Education
     // Diplomas
@@ -285,6 +313,7 @@ class ResumeDtoTransformerTest {
             mainInfo = mainInfo,
             experiences = experiences,
             education = education,
+            skills = skillDtos,
         ),
     )
 
@@ -313,20 +342,7 @@ class ResumeDtoTransformerTest {
         emailAddress = emailAddress.takeIf { hasEmailAddress },
         linkedIn = linkedIn,
         github = github,
-        mainSkills = listOf(
-            MainInfoDto.MainSkillDto(
-                name = skill1Name,
-                pictureUrl = skill1PictureUrl,
-            ),
-            MainInfoDto.MainSkillDto(
-                name = skill2Name,
-                pictureUrl = skill2PictureUrl,
-            ),
-            MainInfoDto.MainSkillDto(
-                name = skill3Name,
-                pictureUrl = skill3PictureUrl,
-            ),
-        ),
+        mainSkills = listOf(skill1Id, skill2Id, skill3Id),
     )
 
     private val mainInfo = MainInfo(
@@ -340,33 +356,64 @@ class ResumeDtoTransformerTest {
         linkedIn = linkedIn,
         github = github,
         mainSkills = listOf(
-            MainInfo.MainSkill(
+            Skill(
                 name = skill1Name,
                 pictureUrl = skill1PictureUrl,
             ),
-            MainInfo.MainSkill(
+            Skill(
                 name = skill2Name,
                 pictureUrl = skill2PictureUrl,
+            ),
+            Skill(
+                name = skill3Id,
+                pictureUrl = skill3PictureUrl,
             ),
         ),
     )
 
     private val experienceDtos = listOf(
         ExperienceDto(
+            id = exp1Id,
             title = exp1Title,
             company = exp1Company,
             pictureUrl = exp1PictureUrl,
             startDate = exp1StartDateString,
             endDate = exp1EndDateString,
+            positions = listOf(
+                PositionDto(
+                    title = exp1Pos1Title,
+                    description = exp1Pos1Description,
+                    skills = listOf(skill1Id, skill2Id),
+                ),
+                PositionDto(
+                    title = exp1Pos2Title,
+                    description = exp1Pos2Description,
+                    skills = emptyList(),
+                ),
+            ),
         ),
         ExperienceDto(
+            id = exp2Id,
             title = exp2Title,
             company = exp2Company,
             pictureUrl = exp2PictureUrl,
             startDate = exp2StartDateString,
             endDate = exp2EndDateString,
+            positions = listOf(
+                PositionDto(
+                    title = exp2Pos1Title,
+                    description = exp2Pos1Description,
+                    skills = listOf(skill1Id),
+                ),
+                PositionDto(
+                    title = exp2Pos2Title,
+                    description = exp2Pos2Description,
+                    skills = listOf(skill1Id),
+                ),
+            ),
         ),
         ExperienceDto(
+            id = exp3Id,
             title = exp3Title,
             company = exp3Company,
             pictureUrl = exp3PictureUrl,
@@ -374,6 +421,7 @@ class ResumeDtoTransformerTest {
             endDate = exp3EndDateString,
         ),
         ExperienceDto(
+            id = exp4Id,
             title = exp4Title,
             company = exp4Company,
             pictureUrl = exp4PictureUrl,
@@ -381,28 +429,61 @@ class ResumeDtoTransformerTest {
             endDate = exp4EndDateString,
         ),
         ExperienceDto(
+            id = exp5Id,
             title = exp5Title,
             company = exp5Company,
             pictureUrl = exp5PictureUrl,
             startDate = exp5StartDateString,
             endDate = exp5EndDateString,
         ),
+        ExperienceDto(
+            id = exp6Id,
+            title = exp6Title,
+            company = exp6Company,
+            pictureUrl = exp6PictureUrl,
+            startDate = exp6StartDateString,
+            endDate = exp6EndDateString,
+        ),
     )
 
     private val experience = listOf(
         Experience(
+            id = exp1Id,
             title = exp1Title,
             company = exp1Company,
             pictureUrl = exp1PictureUrl,
             startDate = exp1StartDate,
             endDate = exp1EndDate,
+            positions = listOf(
+                Position(
+                    title = exp1Pos1Title,
+                    description = exp1Pos1Description,
+                    skills = listOf(
+                        Skill(
+                            name = skill1Name,
+                            pictureUrl = skill1PictureUrl,
+                        ),
+                        Skill(
+                            name = skill2Name,
+                            pictureUrl = skill2PictureUrl,
+                        ),
+                    ),
+                ),
+                Position(
+                    title = exp1Pos2Title,
+                    description = exp1Pos2Description,
+                    skills = emptyList(),
+                ),
+            ),
         ),
         Experience(
+            id = exp2Id,
             title = exp2Title,
             company = exp2Company,
             pictureUrl = exp2PictureUrl,
             startDate = exp2StartDate,
             endDate = null,
+            positions = emptyList(),
         ),
     )
 
@@ -542,6 +623,24 @@ class ResumeDtoTransformerTest {
                 dateAttended = conf2Date,
                 pictureUrl = conf2PictureUrl,
             ),
+        ),
+    )
+
+    private val skillDtos = listOf(
+        SkillDto(
+            id = skill1Id,
+            name = skill1Name,
+            pictureUrl = skill1PictureUrl,
+        ),
+        SkillDto(
+            id = skill2Id,
+            name = skill2Name,
+            pictureUrl = skill2PictureUrl,
+        ),
+        SkillDto(
+            id = skill3Id,
+            name = skill3Name,
+            pictureUrl = skill3PictureUrl,
         ),
     )
 
