@@ -22,6 +22,7 @@ import eu.antoinepurnelle.ui.components.organisms.model.SubSectionModel
 data class MainUiModel(
     val header: Header,
     val experiences: List<SectionCardItemModel> = emptyList(),
+    val projects: List<SectionCardItemModel> = emptyList(),
     val education: List<SubSectionModel> = emptyList(),
 ) : UiModel {
     data class Header(

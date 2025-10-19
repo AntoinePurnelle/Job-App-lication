@@ -44,6 +44,7 @@ import eu.antoinepurnelle.jobapplication.util.companyFallbackPictureUrl
 import eu.antoinepurnelle.jobapplication.util.educationFallbackPictureUrl
 import eu.antoinepurnelle.jobapplication.util.getContext
 import eu.antoinepurnelle.jobapplication.util.launch
+import eu.antoinepurnelle.jobapplication.util.projectFallbackPictureUrl
 import eu.antoinepurnelle.ui.components.atoms.HorizontalDiv
 import eu.antoinepurnelle.ui.components.atoms.RoundedCornerShapeDefault
 import eu.antoinepurnelle.ui.components.atoms.UrlImage
@@ -97,6 +98,7 @@ private fun MainView(
 ) {
     HeaderView(uiModel.header)
     ExperienceView(uiModel.experiences, callback)
+    ProjectsView(uiModel.projects)
     EducationView(uiModel.education)
     Spacer(modifier = Modifier.navigationBarsPadding())
 }
@@ -184,6 +186,21 @@ internal fun HeaderView(
             )
         }
     }
+}
+
+@Composable
+private fun ProjectsView(
+    projects: List<SectionCardItemModel>,
+) {
+    val context = getContext()
+
+    SectionCard(
+        title = "Projects", // TODO #9 i18l
+        items = projects,
+        fallbackPictureUrl = projectFallbackPictureUrl,
+        onItemClick = { it.url?.let { url -> launch(LaunchType.Url(url), context) } },
+        itemTrailingIconRes = Res.drawable.ic_chevron_right,
+    )
 }
 
 @Composable

@@ -63,6 +63,12 @@ import eu.antoinepurnelle.jobapplication.FakeData.location
 import eu.antoinepurnelle.jobapplication.FakeData.name
 import eu.antoinepurnelle.jobapplication.FakeData.phoneNumber
 import eu.antoinepurnelle.jobapplication.FakeData.pictureUrl
+import eu.antoinepurnelle.jobapplication.FakeData.proj1Description
+import eu.antoinepurnelle.jobapplication.FakeData.proj1Name
+import eu.antoinepurnelle.jobapplication.FakeData.proj1PictureUrl
+import eu.antoinepurnelle.jobapplication.FakeData.proj1Url
+import eu.antoinepurnelle.jobapplication.FakeData.proj2Description
+import eu.antoinepurnelle.jobapplication.FakeData.proj2Name
 import eu.antoinepurnelle.jobapplication.FakeData.skill1Name
 import eu.antoinepurnelle.jobapplication.FakeData.skill1PictureUrl
 import eu.antoinepurnelle.jobapplication.FakeData.skill2Name
@@ -154,6 +160,28 @@ class MainPageUiTransformerTest {
                 subtitle = exp2Company,
                 pictureUrl = exp2PictureUrl,
                 date = "Since $exp2StartDateString", // TODO i18n
+            ),
+        ),
+        projects = listOf(
+            SectionCardItemModel(
+                title = proj1Name,
+                subtitle = proj1Description,
+                url = proj1Url,
+                pictureUrl = proj1PictureUrl,
+                pills = listOf(
+                    PillModel(
+                        label = skill1Name,
+                        iconUrl = skill1PictureUrl,
+                    ),
+                    PillModel(
+                        label = skill2Name,
+                        iconUrl = skill2PictureUrl,
+                    ),
+                ),
+            ),
+            SectionCardItemModel(
+                title = proj2Name,
+                subtitle = proj2Description,
             ),
         ),
         education = listOf(

@@ -27,6 +27,7 @@ import eu.antoinepurnelle.jobapplication.domain.model.Resume.Education.Diploma
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.Experience
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.Experience.Position
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.MainInfo
+import eu.antoinepurnelle.jobapplication.domain.model.Resume.Project
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.Skill
 import eu.antoinepurnelle.jobapplication.domain.model.TransformationFailure
 
@@ -52,9 +53,10 @@ class ResumeDtoTransformerImpl : ResumeDtoTransformer {
 
         val mainInfo = transformMainInfo(record) ?: return getError()
         val experiences = transformExperiences(record)
+        val projects = transformProjects(record)
         val education = transformEducation(record)
 
-        return Result.Success(Resume(mainInfo, experiences, education))
+        return Result.Success(Resume(mainInfo, experiences, projects, education))
     }
 
     private fun transformMainInfo(record: ResumeWrapperDto): MainInfo? {
@@ -79,33 +81,44 @@ class ResumeDtoTransformerImpl : ResumeDtoTransformer {
         )
     }
 
-    private fun transformExperiences(record: ResumeWrapperDto): List<Experience> {
-        return record.experiences.mapNotNull { expDto ->
-            val id = expDto.id ?: return@mapNotNull null
-            val title = expDto.title ?: return@mapNotNull null
-            val company = expDto.company ?: return@mapNotNull null
-            val startDate = expDto.startDate?.let { LocalDateParser.parse(it) } ?: return@mapNotNull null
-            val positions = expDto.positions.mapNotNull { posDto ->
-                val posTitle = posDto.title ?: return@mapNotNull null
-                val description = posDto.description ?: return@mapNotNull null
+    private fun transformExperiences(record: ResumeWrapperDto): List<Experience> = record.experiences.mapNotNull { expDto ->
+        val id = expDto.id ?: return@mapNotNull null
+        val title = expDto.title ?: return@mapNotNull null
+        val company = expDto.company ?: return@mapNotNull null
+        val startDate = expDto.startDate?.let { LocalDateParser.parse(it) } ?: return@mapNotNull null
+        val positions = expDto.positions.mapNotNull { posDto ->
+            val posTitle = posDto.title ?: return@mapNotNull null
+            val description = posDto.description ?: return@mapNotNull null
 
-                Position(
-                    title = posTitle,
-                    description = description,
-                    skills = transformSkills(posDto.skills, record.skills),
-                )
-            }
-
-            Experience(
-                id = id,
-                title = title,
-                company = company,
-                pictureUrl = expDto.pictureUrl,
-                startDate = startDate,
-                endDate = expDto.endDate?.let { LocalDateParser.parse(it) },
-                positions = positions,
+            Position(
+                title = posTitle,
+                description = description,
+                skills = transformSkills(posDto.skills, record.skills),
             )
         }
+
+        Experience(
+            id = id,
+            title = title,
+            company = company,
+            pictureUrl = expDto.pictureUrl,
+            startDate = startDate,
+            endDate = expDto.endDate?.let { LocalDateParser.parse(it) },
+            positions = positions,
+        )
+    }
+
+    private fun transformProjects(record: ResumeWrapperDto): List<Project> = record.projects.mapNotNull { projDto ->
+        val name = projDto.name ?: return@mapNotNull null
+        val description = projDto.description ?: return@mapNotNull null
+
+        Project(
+            name = name,
+            description = description,
+            pictureUrl = projDto.pictureUrl,
+            projectUrl = projDto.url,
+            skills = transformSkills(projDto.skills, record.skills),
+        )
     }
 
     private fun transformEducation(record: ResumeWrapperDto): Education {

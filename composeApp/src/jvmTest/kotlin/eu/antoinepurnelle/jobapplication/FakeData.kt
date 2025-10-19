@@ -22,6 +22,7 @@ import eu.antoinepurnelle.jobapplication.domain.model.Resume.Education.Diploma
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.Experience
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.Experience.Position
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.MainInfo
+import eu.antoinepurnelle.jobapplication.domain.model.Resume.Project
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.Skill
 import io.mockk.mockk
 import java.util.Random
@@ -76,6 +77,19 @@ internal object FakeData {
     internal const val exp2StartDateString = "2022-02-01"
     internal val exp2StartDate = mockk<LocalDate>()
 
+    // Projects
+    // Full -> OK
+    internal val proj1Name = faker.app().name()
+    internal val proj1Description = faker.lorem().paragraph()
+    internal val proj1Url = faker.internet().url()
+    internal val proj1PictureUrl = faker.internet().url()
+
+    // Necessary only -> OK
+    internal val proj2Name = faker.app().name()
+    internal val proj2Description = faker.lorem().paragraph()
+    internal val proj2Url: String? = null
+    internal val proj2PictureUrl: String? = null
+
     // Education
     // Diplomas
     // Full -> OK
@@ -119,10 +133,12 @@ internal object FakeData {
     internal fun getResume(
         mainInfo: MainInfo = this.mainInfo,
         experiences: List<Experience> = this.experiences,
+        projects: List<Project> = this.projects,
         education: Education = this.education,
     ) = Resume(
         mainInfo = mainInfo,
         experiences = experiences,
+        projects = projects,
         education = education,
     )
 
@@ -185,6 +201,32 @@ internal object FakeData {
             pictureUrl = exp2PictureUrl,
             startDate = exp2StartDate,
             endDate = null,
+        ),
+    )
+
+    internal val projects = listOf(
+        Project(
+            name = proj1Name,
+            description = proj1Description,
+            projectUrl = proj1Url,
+            pictureUrl = proj1PictureUrl,
+            skills = listOf(
+                Skill(
+                    name = skill1Name,
+                    pictureUrl = skill1PictureUrl,
+                ),
+                Skill(
+                    name = skill2Name,
+                    pictureUrl = skill2PictureUrl,
+                ),
+            ),
+        ),
+        Project(
+            name = proj2Name,
+            description = proj2Description,
+            projectUrl = proj2Url,
+            pictureUrl = proj2PictureUrl,
+            skills = emptyList(),
         ),
     )
 

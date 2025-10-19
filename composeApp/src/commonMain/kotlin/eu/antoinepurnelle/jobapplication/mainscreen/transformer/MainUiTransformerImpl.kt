@@ -56,6 +56,20 @@ class MainUiTransformerImpl : MainUiTransformer {
                 },
             )
         },
+        projects = model.projects.map {
+            SectionCardItemModel(
+                title = it.name,
+                subtitle = it.description,
+                pictureUrl = it.pictureUrl,
+                url = it.projectUrl,
+                pills = it.skills.map { skill ->
+                    PillModel(
+                        label = skill.name,
+                        iconUrl = skill.pictureUrl,
+                    )
+                },
+            )
+        },
         education = listOf(
             SubSectionModel(
                 title = "Diplomas", // TODO i18n

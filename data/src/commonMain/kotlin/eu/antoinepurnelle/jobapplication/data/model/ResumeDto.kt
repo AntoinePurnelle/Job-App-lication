@@ -24,6 +24,7 @@ data class ResumeDto(
     data class ResumeWrapperDto(
         val mainInfo: MainInfoDto? = null,
         val experiences: List<ExperienceDto> = emptyList(),
+        val projects: List<ProjectDto> = emptyList(),
         val education: EducationDto? = null,
         val skills: List<SkillDto> = emptyList(),
     ) {
@@ -58,6 +59,15 @@ data class ResumeDto(
                 val skills: List<String> = emptyList(),
             )
         }
+
+        @Serializable
+        data class ProjectDto(
+            val name: String? = null,
+            val description: String? = null,
+            val url: String? = null,
+            val pictureUrl: String? = null,
+            val skills: List<String> = emptyList(),
+        )
 
         @Serializable
         data class EducationDto(
