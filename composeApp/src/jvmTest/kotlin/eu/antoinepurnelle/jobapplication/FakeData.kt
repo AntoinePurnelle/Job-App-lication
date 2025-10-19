@@ -130,6 +130,10 @@ internal object FakeData {
     internal const val conf2Date = "2021"
     internal val conf2PictureUrl: String? = null
 
+    // Other
+    internal val other1 = faker.lorem().sentence()
+    internal val other2 = faker.lorem().sentence()
+
     internal fun getResume(
         mainInfo: MainInfo = this.mainInfo,
         experiences: List<Experience> = this.experiences,
@@ -140,6 +144,7 @@ internal object FakeData {
         experiences = experiences,
         projects = projects,
         education = education,
+        other = listOf(other1, other2),
     )
 
     internal val mainInfo = MainInfo(

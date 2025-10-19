@@ -61,6 +61,8 @@ import eu.antoinepurnelle.jobapplication.FakeData.headline
 import eu.antoinepurnelle.jobapplication.FakeData.linkedIn
 import eu.antoinepurnelle.jobapplication.FakeData.location
 import eu.antoinepurnelle.jobapplication.FakeData.name
+import eu.antoinepurnelle.jobapplication.FakeData.other1
+import eu.antoinepurnelle.jobapplication.FakeData.other2
 import eu.antoinepurnelle.jobapplication.FakeData.phoneNumber
 import eu.antoinepurnelle.jobapplication.FakeData.pictureUrl
 import eu.antoinepurnelle.jobapplication.FakeData.proj1Description
@@ -235,6 +237,14 @@ class MainPageUiTransformerTest {
                         pictureUrl = conf2PictureUrl,
                     ),
                 ),
+            ),
+        ),
+        other = listOf(
+            SectionCardItemModel(
+                title = other1,
+            ),
+            SectionCardItemModel(
+                title = other2,
             ),
         ),
     )

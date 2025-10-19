@@ -26,6 +26,7 @@ data class ResumeDto(
         val experiences: List<ExperienceDto> = emptyList(),
         val projects: List<ProjectDto> = emptyList(),
         val education: EducationDto? = null,
+        val other: List<String> = emptyList(),
         val skills: List<SkillDto> = emptyList(),
     ) {
         @Serializable

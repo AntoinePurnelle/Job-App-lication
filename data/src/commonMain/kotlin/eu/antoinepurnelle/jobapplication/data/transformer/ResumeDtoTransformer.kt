@@ -55,8 +55,9 @@ class ResumeDtoTransformerImpl : ResumeDtoTransformer {
         val experiences = transformExperiences(record)
         val projects = transformProjects(record)
         val education = transformEducation(record)
+        val other = record.other
 
-        return Result.Success(Resume(mainInfo, experiences, projects, education))
+        return Result.Success(Resume(mainInfo, experiences, projects, education, other))
     }
 
     private fun transformMainInfo(record: ResumeWrapperDto): MainInfo? {

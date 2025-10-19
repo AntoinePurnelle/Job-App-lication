@@ -21,6 +21,7 @@ data class Resume(
     val experiences: List<Experience>,
     val projects: List<Project>,
     val education: Education,
+    val other: List<String>,
 ) {
     data class MainInfo(
         val name: String,

@@ -105,5 +105,10 @@ class MainUiTransformerImpl : MainUiTransformer {
                 },
             ),
         ),
+        other = model.other.map { item ->
+            SectionCardItemModel(
+                title = item,
+            )
+        },
     ) as T
 }

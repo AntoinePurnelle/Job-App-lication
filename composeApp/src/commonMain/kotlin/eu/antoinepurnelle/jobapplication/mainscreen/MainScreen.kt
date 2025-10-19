@@ -100,6 +100,7 @@ private fun MainView(
     ExperienceView(uiModel.experiences, callback)
     ProjectsView(uiModel.projects)
     EducationView(uiModel.education)
+    OtherView(uiModel.other)
     Spacer(modifier = Modifier.navigationBarsPadding())
 }
 
@@ -222,4 +223,12 @@ private fun EducationView(
     subSections = educations,
     title = "Education", // TODO #9 i18l
     fallbackPictureUrl = educationFallbackPictureUrl,
+)
+
+@Composable
+private fun OtherView(
+    other: List<SectionCardItemModel>,
+) = SectionCard(
+    title = "Hobbies, Activities & Other", // TODO #9 i18l
+    items = other,
 )

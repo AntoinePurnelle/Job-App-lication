@@ -335,6 +335,10 @@ class ResumeDtoTransformerTest {
     private val conf4Date: String? = null
     private val conf4PictureUrl = faker.internet().url()
 
+    // Other
+    private val other1 = faker.lorem().sentence()
+    private val other2 = faker.lorem().sentence()
+
     private fun getDto(
         mainInfo: MainInfoDto? = getMainInfoDto(),
         experiences: List<ExperienceDto> = experienceDtos,
@@ -347,6 +351,7 @@ class ResumeDtoTransformerTest {
             projects = projects,
             education = education,
             skills = skillDtos,
+            other = listOf(other1, other2),
         ),
     )
 
@@ -360,6 +365,7 @@ class ResumeDtoTransformerTest {
         experiences = experiences,
         projects = projects,
         education = education,
+        other = listOf(other1, other2),
     )
 
     private fun getMainInfoDto(
