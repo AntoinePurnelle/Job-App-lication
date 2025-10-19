@@ -78,11 +78,6 @@ fun SectionCardCell(
             .onClick(onClick)
             .padding(padding),
     ) {
-        if (item.pills.isNotEmpty()) {
-            PillsGroup(item.pills)
-            VerticalSpacer()
-        }
-
         Row(
             verticalAlignment = CenterVertically,
             horizontalArrangement = spacedBy(Padding.SpacerDefault),
@@ -106,6 +101,11 @@ fun SectionCardCell(
                     tint = colors.text.secondary,
                 )
             }
+        }
+
+        if (item.pills.isNotEmpty()) {
+            VerticalSpacer()
+            PillsGroup(item.pills)
         }
     }
 

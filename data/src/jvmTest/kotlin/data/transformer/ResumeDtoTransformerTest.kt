@@ -23,6 +23,7 @@ import eu.antoinepurnelle.jobapplication.data.model.ResumeDto.ResumeWrapperDto.E
 import eu.antoinepurnelle.jobapplication.data.model.ResumeDto.ResumeWrapperDto.ExperienceDto
 import eu.antoinepurnelle.jobapplication.data.model.ResumeDto.ResumeWrapperDto.ExperienceDto.PositionDto
 import eu.antoinepurnelle.jobapplication.data.model.ResumeDto.ResumeWrapperDto.MainInfoDto
+import eu.antoinepurnelle.jobapplication.data.model.ResumeDto.ResumeWrapperDto.ProjectDto
 import eu.antoinepurnelle.jobapplication.data.model.ResumeDto.ResumeWrapperDto.SkillDto
 import eu.antoinepurnelle.jobapplication.data.transformer.LocalDateParser
 import eu.antoinepurnelle.jobapplication.data.transformer.ResumeDtoTransformer
@@ -36,6 +37,7 @@ import eu.antoinepurnelle.jobapplication.domain.model.Resume.Education.Diploma
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.Experience
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.Experience.Position
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.MainInfo
+import eu.antoinepurnelle.jobapplication.domain.model.Resume.Project
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.Skill
 import eu.antoinepurnelle.jobapplication.domain.model.TransformationFailure
 import io.kotest.matchers.shouldBe
@@ -216,6 +218,35 @@ class ResumeDtoTransformerTest {
     private val exp6StartDateString = "2022-02-01"
     private val exp6EndDateString: String? = null
 
+    // Projects
+    // Full -> OK
+    private val proj1Name = faker.app().name()
+    private val proj1Description = faker.lorem().paragraph()
+    private val proj1Url = faker.internet().url()
+    private val proj1PictureUrl = faker.internet().url()
+    private val proj1Skills = listOf(skill1Id, skill2Id)
+
+    // Necessary only -> OK
+    private val proj2Name = faker.app().name()
+    private val proj2Description = faker.lorem().paragraph()
+    private val proj2Url: String? = null
+    private val proj2PictureUrl: String? = null
+    private val proj2Skills = emptyList<String>()
+
+    // Missing name -> KO
+    private val proj3Name: String? = null
+    private val proj3Description = faker.lorem().paragraph()
+    private val proj3Url = faker.internet().url()
+    private val proj3PictureUrl = faker.internet().url()
+    private val proj3Skills = listOf(skill1Id)
+
+    // Missing description -> KO
+    private val proj4Name = faker.app().name()
+    private val proj4Description: String? = null
+    private val proj4Url = faker.internet().url()
+    private val proj4PictureUrl = faker.internet().url()
+    private val proj4Skills = listOf(skill2Id)
+
     // Education
     // Diplomas
     // Full -> OK
@@ -304,27 +335,37 @@ class ResumeDtoTransformerTest {
     private val conf4Date: String? = null
     private val conf4PictureUrl = faker.internet().url()
 
+    // Other
+    private val other1 = faker.lorem().sentence()
+    private val other2 = faker.lorem().sentence()
+
     private fun getDto(
         mainInfo: MainInfoDto? = getMainInfoDto(),
         experiences: List<ExperienceDto> = experienceDtos,
+        projects: List<ProjectDto> = projectDtos,
         education: EducationDto = educationDto,
     ) = ResumeDto(
         record = ResumeWrapperDto(
             mainInfo = mainInfo,
             experiences = experiences,
+            projects = projects,
             education = education,
             skills = skillDtos,
+            other = listOf(other1, other2),
         ),
     )
 
     private fun getResume(
         mainInfo: MainInfo = this.mainInfo,
         experiences: List<Experience> = this.experience,
+        projects: List<Project> = this.projects,
         education: Education = this.education,
     ) = Resume(
         mainInfo = mainInfo,
         experiences = experiences,
+        projects = projects,
         education = education,
+        other = listOf(other1, other2),
     )
 
     private fun getMainInfoDto(
@@ -484,6 +525,63 @@ class ResumeDtoTransformerTest {
             startDate = exp2StartDate,
             endDate = null,
             positions = emptyList(),
+        ),
+    )
+
+    private val projectDtos = listOf(
+        ProjectDto(
+            name = proj1Name,
+            description = proj1Description,
+            url = proj1Url,
+            pictureUrl = proj1PictureUrl,
+            skills = proj1Skills,
+        ),
+        ProjectDto(
+            name = proj2Name,
+            description = proj2Description,
+            url = proj2Url,
+            pictureUrl = proj2PictureUrl,
+            skills = proj2Skills,
+        ),
+        ProjectDto(
+            name = proj3Name,
+            description = proj3Description,
+            url = proj3Url,
+            pictureUrl = proj3PictureUrl,
+            skills = proj3Skills,
+        ),
+        ProjectDto(
+            name = proj4Name,
+            description = proj4Description,
+            url = proj4Url,
+            pictureUrl = proj4PictureUrl,
+            skills = proj4Skills,
+        ),
+    )
+
+    private val projects = listOf(
+        Project(
+            name = proj1Name,
+            description = proj1Description,
+            pictureUrl = proj1PictureUrl,
+            projectUrl = proj1Url,
+            skills = listOf(
+                Skill(
+                    name = skill1Name,
+                    pictureUrl = skill1PictureUrl,
+                ),
+                Skill(
+                    name = skill2Name,
+                    pictureUrl = skill2PictureUrl,
+                ),
+            ),
+        ),
+        Project(
+            name = proj2Name,
+            description = proj2Description,
+            pictureUrl = proj2PictureUrl,
+            projectUrl = proj2Url,
+            skills = emptyList(),
         ),
     )
 

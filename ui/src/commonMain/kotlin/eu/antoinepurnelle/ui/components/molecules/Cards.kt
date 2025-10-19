@@ -108,7 +108,7 @@ fun SectionCard(
     title: String,
     padding: PaddingValues = PaddingValues(),
     items: List<SectionCardItemModel>,
-    fallbackPictureUrl: String,
+    fallbackPictureUrl: String? = null,
     itemTrailingIconRes: DrawableResource? = null,
     onItemClick: ((SectionCardItemModel) -> Unit)? = null,
 ) {

@@ -19,7 +19,9 @@ import kotlinx.datetime.LocalDate
 data class Resume(
     val mainInfo: MainInfo,
     val experiences: List<Experience>,
+    val projects: List<Project>,
     val education: Education,
+    val other: List<String>,
 ) {
     data class MainInfo(
         val name: String,
@@ -49,6 +51,14 @@ data class Resume(
             val skills: List<Skill> = emptyList(),
         )
     }
+
+    data class Project(
+        val name: String,
+        val description: String,
+        val pictureUrl: String?,
+        val projectUrl: String?,
+        val skills: List<Skill> = emptyList(),
+    )
 
     data class Education(
         val diplomas: List<Diploma> = emptyList(),

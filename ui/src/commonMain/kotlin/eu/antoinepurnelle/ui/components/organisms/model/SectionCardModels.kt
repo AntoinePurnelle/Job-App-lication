@@ -23,6 +23,7 @@ data class SectionCardItemModel(
     val description: String? = null,
     val date: String? = null,
     val pictureUrl: String? = null,
+    val url: String? = null,
     val pills: List<PillModel> = emptyList(),
 )
 

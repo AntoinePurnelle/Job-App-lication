@@ -61,8 +61,16 @@ import eu.antoinepurnelle.jobapplication.FakeData.headline
 import eu.antoinepurnelle.jobapplication.FakeData.linkedIn
 import eu.antoinepurnelle.jobapplication.FakeData.location
 import eu.antoinepurnelle.jobapplication.FakeData.name
+import eu.antoinepurnelle.jobapplication.FakeData.other1
+import eu.antoinepurnelle.jobapplication.FakeData.other2
 import eu.antoinepurnelle.jobapplication.FakeData.phoneNumber
 import eu.antoinepurnelle.jobapplication.FakeData.pictureUrl
+import eu.antoinepurnelle.jobapplication.FakeData.proj1Description
+import eu.antoinepurnelle.jobapplication.FakeData.proj1Name
+import eu.antoinepurnelle.jobapplication.FakeData.proj1PictureUrl
+import eu.antoinepurnelle.jobapplication.FakeData.proj1Url
+import eu.antoinepurnelle.jobapplication.FakeData.proj2Description
+import eu.antoinepurnelle.jobapplication.FakeData.proj2Name
 import eu.antoinepurnelle.jobapplication.FakeData.skill1Name
 import eu.antoinepurnelle.jobapplication.FakeData.skill1PictureUrl
 import eu.antoinepurnelle.jobapplication.FakeData.skill2Name
@@ -156,6 +164,28 @@ class MainPageUiTransformerTest {
                 date = "Since $exp2StartDateString", // TODO i18n
             ),
         ),
+        projects = listOf(
+            SectionCardItemModel(
+                title = proj1Name,
+                subtitle = proj1Description,
+                url = proj1Url,
+                pictureUrl = proj1PictureUrl,
+                pills = listOf(
+                    PillModel(
+                        label = skill1Name,
+                        iconUrl = skill1PictureUrl,
+                    ),
+                    PillModel(
+                        label = skill2Name,
+                        iconUrl = skill2PictureUrl,
+                    ),
+                ),
+            ),
+            SectionCardItemModel(
+                title = proj2Name,
+                subtitle = proj2Description,
+            ),
+        ),
         education = listOf(
             SubSectionModel(
                 title = "Diplomas", // TODO i18n
@@ -207,6 +237,14 @@ class MainPageUiTransformerTest {
                         pictureUrl = conf2PictureUrl,
                     ),
                 ),
+            ),
+        ),
+        other = listOf(
+            SectionCardItemModel(
+                title = other1,
+            ),
+            SectionCardItemModel(
+                title = other2,
             ),
         ),
     )
