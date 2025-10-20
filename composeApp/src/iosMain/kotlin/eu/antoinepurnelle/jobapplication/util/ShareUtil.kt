@@ -14,22 +14,12 @@
 
 package eu.antoinepurnelle.jobapplication.util
 
-import platform.Foundation.NSURL
+import platform.UIKit.UIActivityViewController
 import platform.UIKit.UIApplication
 
-actual fun launch(type: LaunchType, context: Any?) {
-    val urlString = when (type) {
-        is LaunchType.Phone -> "tel://${type.number}"
-        is LaunchType.Chat -> "sms:${type.number}"
-        is LaunchType.Email -> "mailto:${type.address}"
-        is LaunchType.Url -> type.url.formatHttps()
-    }
-    val url = NSURL.URLWithString(urlString)
-    if (url != null) {
-        UIApplication.sharedApplication.openURL(
-            url,
-            options = emptyMap<Any?, Any>(),
-            completionHandler = null,
-        )
-    }
+@Suppress("kotlin:S1172") // context is unused here but kept for common signature
+actual fun shareUrl(url: String, context: Any?) {
+    val activityViewController = UIActivityViewController(activityItems = listOf(url), applicationActivities = null)
+    val window = UIApplication.sharedApplication.keyWindow
+    window?.rootViewController?.presentViewController(activityViewController, animated = true, completion = null)
 }

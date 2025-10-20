@@ -22,6 +22,7 @@ data class Resume(
     val projects: List<Project>,
     val education: Education,
     val other: List<String>,
+    val shareTargets: List<ShareTarget>,
 ) {
     data class MainInfo(
         val name: String,
@@ -86,6 +87,12 @@ data class Resume(
             val pictureUrl: String?,
         )
     }
+
+    data class ShareTarget(
+        val name: String,
+        val pictureUrl: String?,
+        val url: String,
+    )
 
     data class Skill(
         val name: String,

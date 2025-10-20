@@ -14,24 +14,6 @@
 
 package eu.antoinepurnelle.jobapplication.util
 
-import kotlin.js.JsName
+import org.jetbrains.compose.resources.DrawableResource
 
-@JsName("window")
-external val jsWindow: dynamic
-
-actual fun launch(type: LaunchType, context: Any?) {
-    when (type) {
-        is LaunchType.Phone -> {
-            jsWindow.open("tel:${type.number}", "_self")
-        }
-        is LaunchType.Chat -> {
-            jsWindow.open("sms:${type.number}", "_self")
-        }
-        is LaunchType.Email -> {
-            jsWindow.open("mailto:${type.address}", "_self")
-        }
-        is LaunchType.Url -> {
-            jsWindow.open(type.url.formatHttps(), "_blank")
-        }
-    }
-}
+expect fun getShareIconRes(): DrawableResource

@@ -49,14 +49,38 @@ class MainScreenViewModel(
 
     override fun onExperienceClick(id: String) = pilot.navigateTo(ExperienceDetailRoute(id))
 
+    override fun onShareClick() {
+        _uiState.value = when (val currentState = _uiState.value) {
+            is MainUiState.Loaded -> {
+                currentState.copy(showBottomSheet = true)
+            }
+            else -> currentState
+        }
+    }
+
+    override fun onBottomSheetDismiss() {
+        _uiState.value = when (val currentState = _uiState.value) {
+            is MainUiState.Loaded -> {
+                currentState.copy(showBottomSheet = false)
+            }
+            else -> currentState
+        }
+    }
+
     sealed interface MainUiState {
         data object Loading : MainUiState
-        data class Loaded(val data: MainUiModel) : MainUiState
+        data class Loaded(
+            val uiModel: MainUiModel,
+            val showBottomSheet: Boolean = false,
+        ) : MainUiState
+
         data class Error(val message: String) : MainUiState
     }
 
 }
 
-fun interface MainCallback {
+interface MainCallback {
     fun onExperienceClick(id: String)
+    fun onShareClick()
+    fun onBottomSheetDismiss()
 }

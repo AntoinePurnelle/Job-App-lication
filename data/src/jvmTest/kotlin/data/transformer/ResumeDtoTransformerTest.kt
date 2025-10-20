@@ -24,6 +24,7 @@ import eu.antoinepurnelle.jobapplication.data.model.ResumeDto.ResumeWrapperDto.E
 import eu.antoinepurnelle.jobapplication.data.model.ResumeDto.ResumeWrapperDto.ExperienceDto.PositionDto
 import eu.antoinepurnelle.jobapplication.data.model.ResumeDto.ResumeWrapperDto.MainInfoDto
 import eu.antoinepurnelle.jobapplication.data.model.ResumeDto.ResumeWrapperDto.ProjectDto
+import eu.antoinepurnelle.jobapplication.data.model.ResumeDto.ResumeWrapperDto.ShareTargetDto
 import eu.antoinepurnelle.jobapplication.data.model.ResumeDto.ResumeWrapperDto.SkillDto
 import eu.antoinepurnelle.jobapplication.data.transformer.LocalDateParser
 import eu.antoinepurnelle.jobapplication.data.transformer.ResumeDtoTransformer
@@ -38,6 +39,7 @@ import eu.antoinepurnelle.jobapplication.domain.model.Resume.Experience
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.Experience.Position
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.MainInfo
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.Project
+import eu.antoinepurnelle.jobapplication.domain.model.Resume.ShareTarget
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.Skill
 import eu.antoinepurnelle.jobapplication.domain.model.TransformationFailure
 import io.kotest.matchers.shouldBe
@@ -339,11 +341,33 @@ class ResumeDtoTransformerTest {
     private val other1 = faker.lorem().sentence()
     private val other2 = faker.lorem().sentence()
 
+    // Share Targets
+    // Full -> OK
+    private val share1Name = faker.app().name()
+    private val share1Url = faker.internet().url()
+    private val share1PictureUrl = faker.internet().url()
+
+    // Necessary only -> OK
+    private val share2Name = faker.app().name()
+    private val share2Url = faker.internet().url()
+    private val share2PictureUrl: String? = null
+
+    // Missing name -> KO
+    private val share3Name: String? = null
+    private val share3Url = faker.internet().url()
+    private val share3PictureUrl = faker.internet().url()
+
+    // Missing URL -> KO
+    private val share4Name = faker.app().name()
+    private val share4Url: String? = null
+    private val share4PictureUrl = faker.internet().url()
+
     private fun getDto(
         mainInfo: MainInfoDto? = getMainInfoDto(),
         experiences: List<ExperienceDto> = experienceDtos,
         projects: List<ProjectDto> = projectDtos,
         education: EducationDto = educationDto,
+        shareTargets: List<ShareTargetDto> = shareTargetDtos,
     ) = ResumeDto(
         record = ResumeWrapperDto(
             mainInfo = mainInfo,
@@ -352,6 +376,7 @@ class ResumeDtoTransformerTest {
             education = education,
             skills = skillDtos,
             other = listOf(other1, other2),
+            shareTargets = shareTargets,
         ),
     )
 
@@ -360,12 +385,14 @@ class ResumeDtoTransformerTest {
         experiences: List<Experience> = this.experience,
         projects: List<Project> = this.projects,
         education: Education = this.education,
+        shareTargets: List<ShareTarget> = this.shareTargets,
     ) = Resume(
         mainInfo = mainInfo,
         experiences = experiences,
         projects = projects,
         education = education,
         other = listOf(other1, other2),
+        shareTargets = shareTargets,
     )
 
     private fun getMainInfoDto(
@@ -739,6 +766,42 @@ class ResumeDtoTransformerTest {
             id = skill3Id,
             name = skill3Name,
             pictureUrl = skill3PictureUrl,
+        ),
+    )
+
+    private val shareTargetDtos = listOf(
+        ShareTargetDto(
+            name = share1Name,
+            url = share1Url,
+            pictureUrl = share1PictureUrl,
+        ),
+        ShareTargetDto(
+            name = share2Name,
+            url = share2Url,
+            pictureUrl = share2PictureUrl,
+        ),
+        ShareTargetDto(
+            name = share3Name,
+            url = share3Url,
+            pictureUrl = share3PictureUrl,
+        ),
+        ShareTargetDto(
+            name = share4Name,
+            url = share4Url,
+            pictureUrl = share4PictureUrl,
+        ),
+    )
+
+    private val shareTargets = listOf(
+        ShareTarget(
+            name = share1Name,
+            url = share1Url,
+            pictureUrl = share1PictureUrl,
+        ),
+        ShareTarget(
+            name = share2Name,
+            url = share2Url,
+            pictureUrl = share2PictureUrl,
         ),
     )
 

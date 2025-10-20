@@ -71,12 +71,19 @@ import eu.antoinepurnelle.jobapplication.FakeData.proj1PictureUrl
 import eu.antoinepurnelle.jobapplication.FakeData.proj1Url
 import eu.antoinepurnelle.jobapplication.FakeData.proj2Description
 import eu.antoinepurnelle.jobapplication.FakeData.proj2Name
+import eu.antoinepurnelle.jobapplication.FakeData.share1Name
+import eu.antoinepurnelle.jobapplication.FakeData.share1PictureUrl
+import eu.antoinepurnelle.jobapplication.FakeData.share1Url
+import eu.antoinepurnelle.jobapplication.FakeData.share2Name
+import eu.antoinepurnelle.jobapplication.FakeData.share2PictureUrl
+import eu.antoinepurnelle.jobapplication.FakeData.share2Url
 import eu.antoinepurnelle.jobapplication.FakeData.skill1Name
 import eu.antoinepurnelle.jobapplication.FakeData.skill1PictureUrl
 import eu.antoinepurnelle.jobapplication.FakeData.skill2Name
 import eu.antoinepurnelle.jobapplication.FakeData.skill2PictureUrl
 import eu.antoinepurnelle.jobapplication.domain.transformer.MainUiTransformer
 import eu.antoinepurnelle.jobapplication.mainscreen.model.MainUiModel
+import eu.antoinepurnelle.jobapplication.mainscreen.model.MainUiModel.ShareMenuItem
 import eu.antoinepurnelle.jobapplication.util.formatLocalDate
 import eu.antoinepurnelle.ui.components.molecules.model.PillModel
 import eu.antoinepurnelle.ui.components.organisms.model.SectionCardItemModel
@@ -245,6 +252,18 @@ class MainPageUiTransformerTest {
             ),
             SectionCardItemModel(
                 title = other2,
+            ),
+        ),
+        shareMenuItems = listOf(
+            ShareMenuItem(
+                title = share1Name,
+                pictureUrl = share1PictureUrl,
+                url = share1Url,
+            ),
+            ShareMenuItem(
+                title = share2Name,
+                pictureUrl = share2PictureUrl,
+                url = share2Url,
             ),
         ),
     )

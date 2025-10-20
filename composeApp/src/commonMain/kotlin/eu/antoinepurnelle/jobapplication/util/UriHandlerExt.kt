@@ -14,26 +14,21 @@
 
 package eu.antoinepurnelle.jobapplication.util
 
-import java.awt.Desktop
-import java.net.URI
+import androidx.compose.ui.platform.UriHandler
 
-actual fun launch(type: LaunchType, context: Any?) {
-    val desktop = Desktop.getDesktop()
+fun UriHandler.launch(type: LaunchType) {
     when (type) {
         is LaunchType.Phone -> {
-            val mailto = URI("tel:${type.number.replace(" ", "")}")
-            desktop.browse(mailto)
+            openUri("tel:${type.number.replace(" ", "")}")
         }
         is LaunchType.Chat -> {
-            val sms = URI("sms:${type.number.replace(" ", "")}")
-            desktop.browse(sms)
+            openUri("sms:${type.number.replace(" ", "")}")
         }
         is LaunchType.Email -> {
-            val mailto = URI("mailto:${type.address}")
-            desktop.mail(mailto)
+            openUri("mailto:${type.address}")
         }
         is LaunchType.Url -> {
-            desktop.browse(URI(type.url.formatHttps()))
+            openUri(type.url.formatHttps())
         }
     }
 }

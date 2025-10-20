@@ -28,6 +28,7 @@ data class ResumeDto(
         val education: EducationDto? = null,
         val other: List<String> = emptyList(),
         val skills: List<SkillDto> = emptyList(),
+        val shareTargets: List<ShareTargetDto> = emptyList(),
     ) {
         @Serializable
         data class MainInfoDto(
@@ -100,6 +101,13 @@ data class ResumeDto(
                 val pictureUrl: String? = null,
             )
         }
+
+        @Serializable
+        data class ShareTargetDto(
+            val url: String? = null,
+            val name: String? = null,
+            val pictureUrl: String? = null,
+        )
 
         @Serializable
         data class SkillDto(

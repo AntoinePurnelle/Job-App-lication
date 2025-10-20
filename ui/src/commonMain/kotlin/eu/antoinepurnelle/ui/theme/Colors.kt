@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import eu.antoinepurnelle.ui.theme.Colors.DecorColors
 import eu.antoinepurnelle.ui.theme.Colors.DecorColors.CardsColors
+import eu.antoinepurnelle.ui.theme.Colors.DecorColors.PopupColors
 import eu.antoinepurnelle.ui.theme.Colors.TextColors
 
 data class Colors(
@@ -36,11 +37,17 @@ data class Colors(
         val pillBackground: Color,
 
         val card: CardsColors,
+        val popup: PopupColors,
     ) {
         data class CardsColors(
             val background: Color,
             val shadow: Color,
             val inset: Color,
+        )
+
+        data class PopupColors(
+            val background: Color,
+            val overlay: Color,
         )
     }
 
@@ -66,6 +73,10 @@ val LightColors = Colors(
             shadow = Color(0x1A101828),
             inset = Color(0x1018280D),
         ),
+        popup = PopupColors(
+            background = Color.White,
+            overlay = Color(0x80001830),
+        ),
     ),
     text = TextColors(
         main = Color(0xFF001830), // dark grey
@@ -84,6 +95,10 @@ val DarkColors = Colors(
             background = Color(0xFF1B1E26), // Dark grey
             shadow = Color.Transparent,
             inset = Color(0x1018280D),
+        ),
+        popup = PopupColors(
+            background = Color(0xFF1B1E26), // Dark grey
+            overlay = Color(0x80001830),
         ),
     ),
     text = TextColors(

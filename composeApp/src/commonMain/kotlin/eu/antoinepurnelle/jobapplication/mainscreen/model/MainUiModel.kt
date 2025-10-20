@@ -25,6 +25,7 @@ data class MainUiModel(
     val projects: List<SectionCardItemModel> = emptyList(),
     val education: List<SubSectionModel> = emptyList(),
     val other: List<SectionCardItemModel> = emptyList(),
+    val shareMenuItems: List<ShareMenuItem> = emptyList(),
 ) : UiModel {
     data class Header(
         val name: String,
@@ -37,5 +38,11 @@ data class MainUiModel(
         val linkedIn: String? = null,
         val github: String? = null,
         val mainSkills: List<PillModel> = emptyList(),
+    )
+
+    data class ShareMenuItem(
+        val title: String,
+        val url: String,
+        val pictureUrl: String? = null,
     )
 }

@@ -22,14 +22,14 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import eu.antoinepurnelle.ui.components.molecules.model.PillModel
 import eu.antoinepurnelle.ui.theme.Dimens.Padding.SpacerDefault
-import eu.antoinepurnelle.ui.theme.Dimens.Padding.SpacerSmall
+import eu.antoinepurnelle.ui.theme.Dimens.Padding.SpacerXSmall
 
 @Composable
 fun PillsGroup(
     models: List<PillModel>,
 ) = FlowRow(
     horizontalArrangement = spacedBy(SpacerDefault, alignment = CenterHorizontally),
-    verticalArrangement = spacedBy(SpacerSmall),
+    verticalArrangement = spacedBy(SpacerXSmall),
     modifier = Modifier.fillMaxWidth(),
 ) {
     models.forEach { model -> Pill(model = model) }

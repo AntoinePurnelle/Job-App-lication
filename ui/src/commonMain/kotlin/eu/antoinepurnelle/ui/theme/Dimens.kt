@@ -25,9 +25,10 @@ object Dimens {
         val CardVertical = 16.dp
         val CardVerticalHalf = CardVertical / 2
 
-        val SpacerDefault = 16.dp
-        val SpacerSmall = 8.dp
         val SpacerContent = 2.dp
+        val SpacerXSmall = 8.dp
+        val SpacerSmall = 12.dp
+        val SpacerDefault = 16.dp
         val SpacerLarge = 24.dp
         val SpacerXLarge = 32.dp
 
