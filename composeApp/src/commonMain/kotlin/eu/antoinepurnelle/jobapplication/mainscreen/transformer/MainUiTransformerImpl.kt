@@ -18,6 +18,8 @@ import eu.antoinepurnelle.jobapplication.domain.model.Resume
 import eu.antoinepurnelle.jobapplication.domain.model.UiModel
 import eu.antoinepurnelle.jobapplication.domain.transformer.MainUiTransformer
 import eu.antoinepurnelle.jobapplication.mainscreen.model.MainUiModel
+import eu.antoinepurnelle.jobapplication.mainscreen.model.MainUiModel.Header
+import eu.antoinepurnelle.jobapplication.mainscreen.model.MainUiModel.ShareMenuItem
 import eu.antoinepurnelle.jobapplication.util.formatLocalDate
 import eu.antoinepurnelle.ui.components.molecules.model.PillModel
 import eu.antoinepurnelle.ui.components.organisms.model.SectionCardItemModel
@@ -26,7 +28,7 @@ import eu.antoinepurnelle.ui.components.organisms.model.SubSectionModel
 class MainUiTransformerImpl : MainUiTransformer {
     @Suppress("UNCHECKED_CAST")
     override fun <T : UiModel> transform(model: Resume): T = MainUiModel(
-        header = MainUiModel.Header(
+        header = Header(
             name = model.mainInfo.name,
             headline = model.mainInfo.headline,
             pictureUrl = model.mainInfo.pictureUrl,
@@ -108,6 +110,13 @@ class MainUiTransformerImpl : MainUiTransformer {
         other = model.other.map { item ->
             SectionCardItemModel(
                 title = item,
+            )
+        },
+        shareMenuItems = model.shareTargets.map { target ->
+            ShareMenuItem(
+                title = target.name,
+                pictureUrl = target.pictureUrl,
+                url = target.url,
             )
         },
     ) as T

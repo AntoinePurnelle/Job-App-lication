@@ -14,9 +14,12 @@
 
 package eu.antoinepurnelle.jobapplication.mainscreen
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,19 +36,24 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalUriHandler
 import eu.antoinepurnelle.jobapplication.Pilot
 import eu.antoinepurnelle.jobapplication.mainscreen.MainScreenViewModel.MainUiState.Error
 import eu.antoinepurnelle.jobapplication.mainscreen.MainScreenViewModel.MainUiState.Loaded
 import eu.antoinepurnelle.jobapplication.mainscreen.MainScreenViewModel.MainUiState.Loading
 import eu.antoinepurnelle.jobapplication.mainscreen.model.MainUiModel
-import eu.antoinepurnelle.jobapplication.mainscreen.model.MainUiModel.Header
+import eu.antoinepurnelle.jobapplication.mainscreen.model.MainUiModel.ShareMenuItem
 import eu.antoinepurnelle.jobapplication.util.LaunchType
 import eu.antoinepurnelle.jobapplication.util.companyFallbackPictureUrl
 import eu.antoinepurnelle.jobapplication.util.educationFallbackPictureUrl
 import eu.antoinepurnelle.jobapplication.util.getContext
+import eu.antoinepurnelle.jobapplication.util.getShareIconRes
 import eu.antoinepurnelle.jobapplication.util.launch
 import eu.antoinepurnelle.jobapplication.util.projectFallbackPictureUrl
+import eu.antoinepurnelle.jobapplication.util.shareUrl
 import eu.antoinepurnelle.ui.components.atoms.HorizontalDiv
+import eu.antoinepurnelle.ui.components.atoms.HorizontalSpacer
 import eu.antoinepurnelle.ui.components.atoms.RoundedCornerShapeDefault
 import eu.antoinepurnelle.ui.components.atoms.UrlImage
 import eu.antoinepurnelle.ui.components.atoms.VerticalSpacer
@@ -55,12 +63,15 @@ import eu.antoinepurnelle.ui.components.molecules.QuickAction
 import eu.antoinepurnelle.ui.components.molecules.SectionCard
 import eu.antoinepurnelle.ui.components.molecules.SubSectionsCard
 import eu.antoinepurnelle.ui.components.molecules.cardDecoration
+import eu.antoinepurnelle.ui.components.organisms.BottomSheet
 import eu.antoinepurnelle.ui.components.organisms.ErrorView
 import eu.antoinepurnelle.ui.components.organisms.LoadingView
 import eu.antoinepurnelle.ui.components.organisms.model.SectionCardItemModel
 import eu.antoinepurnelle.ui.components.organisms.model.SubSectionModel
 import eu.antoinepurnelle.ui.theme.Dimens.Padding
 import eu.antoinepurnelle.ui.theme.Dimens.Padding.SpacerDefault
+import eu.antoinepurnelle.ui.theme.Dimens.Padding.SpacerLarge
+import eu.antoinepurnelle.ui.theme.Dimens.Padding.SpacerSmall
 import eu.antoinepurnelle.ui.theme.Dimens.Size
 import eu.antoinepurnelle.ui.theme.colors
 import jobapplication.composeapp.generated.resources.Res
@@ -70,6 +81,7 @@ import jobapplication.composeapp.generated.resources.ic_email
 import jobapplication.composeapp.generated.resources.ic_github
 import jobapplication.composeapp.generated.resources.ic_linkedin
 import jobapplication.composeapp.generated.resources.ic_phone
+import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -81,37 +93,91 @@ fun MainScreen(
     when (val state = viewModel.uiState.collectAsState().value) {
         is Error -> ErrorView(state.message)
         is Loading -> LoadingView()
-        is Loaded -> MainView(state.data, viewModel)
+        is Loaded -> MainView(state, viewModel)
     }
 }
 
 @Composable
 private fun MainView(
-    uiModel: MainUiModel,
+    uiState: Loaded,
     callback: MainCallback,
-) = Column(
-    modifier = Modifier
-        .fillMaxSize()
-        .verticalScroll(rememberScrollState())
-        .statusBarsPadding()
-        .padding(Padding.Screen),
 ) {
-    HeaderView(uiModel.header)
-    ExperienceView(uiModel.experiences, callback)
-    ProjectsView(uiModel.projects)
-    EducationView(uiModel.education)
-    OtherView(uiModel.other)
-    Spacer(modifier = Modifier.navigationBarsPadding())
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .statusBarsPadding()
+            .padding(Padding.Screen),
+    ) {
+        HeaderView(uiState.uiModel, callback)
+        ExperienceView(uiState.uiModel.experiences, callback)
+        ProjectsView(uiState.uiModel.projects)
+        EducationView(uiState.uiModel.education)
+        OtherView(uiState.uiModel.other)
+        Spacer(modifier = Modifier.navigationBarsPadding())
+    }
+
+    if (uiState.showBottomSheet) {
+        ShareBottomSheet(uiState.uiModel.shareMenuItems, callback)
+    }
+}
+
+@Composable
+private fun ShareBottomSheet(
+    shareMenuItems: List<ShareMenuItem>,
+    callback: MainCallback,
+) {
+    BottomSheet(
+        onDismissRequest = callback::onBottomSheetDismiss,
+    ) {
+        shareMenuItems.forEach { item: ShareMenuItem ->
+            val context = getContext()
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        shareUrl(item.url, context)
+                        callback.onBottomSheetDismiss()
+                    }
+                    .padding(vertical = SpacerSmall, horizontal = SpacerLarge),
+            ) {
+                val iconModifier = Modifier.size(Size.IconDefault)
+                if (item.pictureUrl != null) {
+                    UrlImage(
+                        url = item.pictureUrl,
+                        contentDescription = item.title,
+                        modifier = iconModifier,
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(getShareIconRes()),
+                        contentDescription = item.title,
+                        colorFilter = ColorFilter.tint(colors.text.main),
+                        modifier = iconModifier,
+                    )
+                }
+
+                HorizontalSpacer()
+
+                Text(
+                    text = item.title,
+                    style = typography.titleMedium,
+                    color = colors.text.main,
+                )
+            }
+        }
+    }
 }
 
 @Composable
 internal fun HeaderView(
-    header: Header,
+    uiModel: MainUiModel,
+    callback: MainCallback,
 ) = Column(
     modifier = Modifier.cardDecoration().fillMaxWidth(),
     horizontalAlignment = CenterHorizontally,
 ) {
-    val context = getContext()
+    val header = uiModel.header
 
     header.pictureUrl?.let {
         UrlImage(
@@ -156,26 +222,29 @@ internal fun HeaderView(
         verticalArrangement = spacedBy(SpacerDefault),
         modifier = Modifier.fillMaxWidth(),
     ) {
+        val uriHandler = LocalUriHandler.current
         QuickAction(
             iconRes = Res.drawable.ic_phone,
             contentDescription = "Call ${header.phoneNumber}", // TODO #9 i18l
-            onclick = { launch(LaunchType.Phone(header.phoneNumber), context) },
+            onclick = { uriHandler.launch(LaunchType.Phone(header.phoneNumber)) },
         )
         QuickAction(
             iconRes = Res.drawable.ic_chat,
             contentDescription = "Chat with ${header.phoneNumber}", // TODO #9 i18l
-            onclick = { launch(LaunchType.Chat(header.phoneNumber), context) },
+            onclick = { uriHandler.launch(LaunchType.Chat(header.phoneNumber)) },
         )
         QuickAction(
             iconRes = Res.drawable.ic_email,
             contentDescription = "Email ${header.emailAddress}", // TODO #9 i18l
-            onclick = { launch(LaunchType.Email(header.emailAddress), context) },
+            onclick = { uriHandler.launch(LaunchType.Email(header.emailAddress)) },
         )
         header.linkedIn?.let {
             QuickAction(
                 iconRes = Res.drawable.ic_linkedin,
                 contentDescription = "LinkedIn profile ${header.linkedIn}", // TODO #9 i18l
-                onclick = { launch(LaunchType.Url(header.linkedIn), context) },
+                onclick = {
+                    uriHandler.launch(LaunchType.Url(header.linkedIn))
+                },
             )
         }
 
@@ -183,7 +252,15 @@ internal fun HeaderView(
             QuickAction(
                 iconRes = Res.drawable.ic_github,
                 contentDescription = "GitHub profile ${header.github}", // TODO #9 i18l
-                onclick = { launch(LaunchType.Url(header.github), context) },
+                onclick = { uriHandler.launch(LaunchType.Url(header.github)) },
+            )
+        }
+
+        if (uiModel.shareMenuItems.isNotEmpty()) {
+            QuickAction(
+                iconRes = getShareIconRes(),
+                contentDescription = "Share", // TODO #9 i18l
+                onclick = { callback.onShareClick() },
             )
         }
     }
@@ -193,13 +270,13 @@ internal fun HeaderView(
 private fun ProjectsView(
     projects: List<SectionCardItemModel>,
 ) {
-    val context = getContext()
+    val uriHandler = LocalUriHandler.current
 
     SectionCard(
         title = "Projects", // TODO #9 i18l
         items = projects,
         fallbackPictureUrl = projectFallbackPictureUrl,
-        onItemClick = { it.url?.let { url -> launch(LaunchType.Url(url), context) } },
+        onItemClick = { it.url?.let { url -> uriHandler.launch(LaunchType.Url(url)) } },
         itemTrailingIconRes = Res.drawable.ic_chevron_right,
     )
 }

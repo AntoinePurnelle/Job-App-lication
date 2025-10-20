@@ -23,6 +23,7 @@ import eu.antoinepurnelle.jobapplication.domain.model.Resume.Experience
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.Experience.Position
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.MainInfo
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.Project
+import eu.antoinepurnelle.jobapplication.domain.model.Resume.ShareTarget
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.Skill
 import io.mockk.mockk
 import java.util.Random
@@ -134,17 +135,30 @@ internal object FakeData {
     internal val other1 = faker.lorem().sentence()
     internal val other2 = faker.lorem().sentence()
 
+    // Share Targets
+    // Full -> OK
+    internal val share1Name = faker.app().name()
+    internal val share1Url = faker.internet().url()
+    internal val share1PictureUrl = faker.internet().url()
+
+    // Necessary only -> OK
+    internal val share2Name = faker.app().name()
+    internal val share2Url = faker.internet().url()
+    internal val share2PictureUrl: String? = null
+
     internal fun getResume(
         mainInfo: MainInfo = this.mainInfo,
         experiences: List<Experience> = this.experiences,
         projects: List<Project> = this.projects,
         education: Education = this.education,
+        shareTargets: List<ShareTarget> = this.shareTargets,
     ) = Resume(
         mainInfo = mainInfo,
         experiences = experiences,
         projects = projects,
         education = education,
         other = listOf(other1, other2),
+        shareTargets = shareTargets,
     )
 
     internal val mainInfo = MainInfo(
@@ -277,6 +291,19 @@ internal object FakeData {
                 dateAttended = conf2Date,
                 pictureUrl = conf2PictureUrl,
             ),
+        ),
+    )
+
+    internal val shareTargets = listOf(
+        ShareTarget(
+            name = share1Name,
+            url = share1Url,
+            pictureUrl = share1PictureUrl,
+        ),
+        ShareTarget(
+            name = share2Name,
+            url = share2Url,
+            pictureUrl = share2PictureUrl,
         ),
     )
 }

@@ -14,11 +14,8 @@
 
 package eu.antoinepurnelle.jobapplication.util
 
-sealed class LaunchType {
-    data class Phone(val number: String) : LaunchType()
-    data class Chat(val number: String) : LaunchType()
-    data class Email(val address: String) : LaunchType()
-    data class Url(val url: String) : LaunchType()
-}
+import jobapplication.composeapp.generated.resources.Res
+import jobapplication.composeapp.generated.resources.ic_share_android
+import org.jetbrains.compose.resources.DrawableResource
 
-expect fun launch(type: LaunchType, context: Any?)
+actual fun getShareIconRes(): DrawableResource = Res.drawable.ic_share_android

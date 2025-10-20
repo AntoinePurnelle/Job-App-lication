@@ -13,7 +13,7 @@
 [versions]
 # Kotlin
 kotlin = "2.2.20"
-kotlinBrowser = "2025.10.7"
+kotlin-browser = "2025.10.7"
 kotlinx-coroutines = "1.10.2"
 ksp = "2.2.20-2.0.4"
 datetime = "0.7.1"
@@ -26,11 +26,11 @@ android-targetSdk = "36"
 androidx-activity = "1.11.0"
 androidx-appcompat = "1.7.1"
 androidx-core = "1.17.0"
-androidx-lifecycle = "2.9.4"
+androidx-lifecycle = "2.9.5"
 
 # Compose
 composeMultiplatform = "1.9.0"
-composeHotReload = "1.0.0-rc01"
+composeHotReload = "1.0.0-rc02"
 
 # Tools
 koin = "4.1.1"
@@ -38,10 +38,10 @@ ktor = "3.3.1"
 
 # Testing & Checks
 junit = "4.13.2"
-kotest = "6.0.3"
+kotest = "6.0.4"
 mockk = "1.14.6"
 junitparams = "1.1.1"
-datafaker = "2.5.1"
+datafaker = "2.5.2"
 detekt = "1.23.8"
 ktlint = "13.1.0"
 
@@ -50,7 +50,7 @@ kamel = "1.0.8"
 
 [libraries]
 # Kotlin
-kotlin-browser = { module = "org.jetbrains.kotlin-wrappers:kotlin-browser", version.ref = "kotlinBrowser" }
+kotlin-browser = { module = "org.jetbrains.kotlin-wrappers:kotlin-browser", version.ref = "kotlin-browser" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }

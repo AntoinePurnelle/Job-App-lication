@@ -28,6 +28,7 @@ import eu.antoinepurnelle.jobapplication.domain.model.Resume.Experience
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.Experience.Position
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.MainInfo
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.Project
+import eu.antoinepurnelle.jobapplication.domain.model.Resume.ShareTarget
 import eu.antoinepurnelle.jobapplication.domain.model.Resume.Skill
 import eu.antoinepurnelle.jobapplication.domain.model.TransformationFailure
 
@@ -56,8 +57,9 @@ class ResumeDtoTransformerImpl : ResumeDtoTransformer {
         val projects = transformProjects(record)
         val education = transformEducation(record)
         val other = record.other
+        val shareTargets = transformShareTargets(record)
 
-        return Result.Success(Resume(mainInfo, experiences, projects, education, other))
+        return Result.Success(Resume(mainInfo, experiences, projects, education, other, shareTargets))
     }
 
     private fun transformMainInfo(record: ResumeWrapperDto): MainInfo? {
@@ -162,6 +164,19 @@ class ResumeDtoTransformerImpl : ResumeDtoTransformer {
         } ?: emptyList()
 
         return Education(diplomas, courses, conferences)
+    }
+
+    private fun transformShareTargets(
+        record: ResumeWrapperDto,
+    ): List<ShareTarget> = record.shareTargets.mapNotNull { shareDto ->
+        val url = shareDto.url ?: return@mapNotNull null
+        val name = shareDto.name ?: return@mapNotNull null
+
+        ShareTarget(
+            name = name,
+            pictureUrl = shareDto.pictureUrl,
+            url = url,
+        )
     }
 
     private fun transformSkills(

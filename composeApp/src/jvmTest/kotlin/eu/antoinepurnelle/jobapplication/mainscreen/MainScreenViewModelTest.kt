@@ -48,6 +48,7 @@ class MainScreenViewModelTest {
 
     @MockK private lateinit var fetchMainPageUseCase: FetchMainPageUseCase
     @MockK private lateinit var pilot: Pilot
+    @MockK private lateinit var uiModel: MainUiModel
 
     private lateinit var viewModel: MainScreenViewModel
     private val dispatcher: TestDispatcher = UnconfinedTestDispatcher()
@@ -56,6 +57,7 @@ class MainScreenViewModelTest {
     fun setup() {
         fetchMainPageUseCase = mockk()
         pilot = mockk()
+        uiModel = mockk()
 
         Dispatchers.setMain(dispatcher)
     }
@@ -70,7 +72,6 @@ class MainScreenViewModelTest {
     fun `init - fetch success - should call fetchMainPageUseCase and set Loaded UiState`() {
         // GIVEN
         // THIS DATA
-        val uiModel = mockk<MainUiModel>()
         val fetchResult = Result.Success(uiModel)
         val expectedUiState = Loaded(uiModel)
 
@@ -118,7 +119,6 @@ class MainScreenViewModelTest {
     }
 
     private fun createViewModelAndDisregardInit() {
-        val uiModel = mockk<MainUiModel>()
         val fetchResult = Result.Success(uiModel)
         coEvery { fetchMainPageUseCase<MainUiModel>() } returns fetchResult
 
@@ -147,6 +147,41 @@ class MainScreenViewModelTest {
         verify {
             pilot.navigateTo(ExperienceDetailRoute(id))
         }
+    }
+
+    @Test
+    fun `onShareClick - when in Loaded state - should set showBottomSheet to true`() {
+        // GIVEN
+        // THIS SETUP
+        createViewModelAndDisregardInit()
+
+        // THIS DATA
+        val expectedState = Loaded(uiModel, showBottomSheet = true)
+
+        // WHEN
+        viewModel.onShareClick()
+
+        // THEN
+        // THIS SHOULD BE
+        viewModel shouldHaveState expectedState
+    }
+
+    @Test
+    fun `onBottomSheetDismiss - when in Loaded state - should set showBottomSheet to false`() {
+        // GIVEN
+        // THIS SETUP
+        createViewModelAndDisregardInit()
+        viewModel.onShareClick()
+
+        // THIS DATA
+        val expectedState = Loaded(uiModel, showBottomSheet = false)
+
+        // WHEN
+        viewModel.onBottomSheetDismiss()
+
+        // THEN
+        // THIS SHOULD BE
+        viewModel shouldHaveState expectedState
     }
 
     private infix fun MainScreenViewModel.shouldHaveState(state: MainUiState) {
