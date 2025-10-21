@@ -18,8 +18,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed interface Route {
+
     @Serializable
     object MainScreenRoute : Route
+
     @Serializable
     data class ExperienceDetailRoute(val experienceId: String) : Route
+
+    @Serializable
+    object AiRoute : Route
+
 }

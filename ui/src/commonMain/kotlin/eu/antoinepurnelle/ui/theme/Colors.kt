@@ -25,6 +25,7 @@ import eu.antoinepurnelle.ui.theme.Colors.TextColors
 data class Colors(
     val decor: DecorColors,
     val text: TextColors,
+    val accent: Color,
 ) {
     data class DecorColors(
         val gradientStart: Color,
@@ -34,7 +35,9 @@ data class Colors(
         val border: Color = divider,
 
         val buttonBackground: Color,
+        val buttonForeground: Color = Color.White,
         val pillBackground: Color,
+        val inputBackground: Color = pillBackground,
 
         val card: CardsColors,
         val popup: PopupColors,
@@ -66,11 +69,11 @@ val LightColors = Colors(
         gradientStart = Color(0xFF6EC6FF), // lighter blue
         gradientEnd = Color(0xFFB2EBF2), // lighter cyan
         divider = Color(0xFFE9EDF2), // light grey
-        buttonBackground = Color(0xFFFFDAB0), // Light apricot/peach orange
+        buttonBackground = Color(0xFFE6B87C), // apricot/peach orange
         pillBackground = Color(0xFFF5F7FA), // Very light grey
         card = CardsColors(
             background = Color.White,
-            shadow = Color(0x1A101828),
+            shadow = Color(0x33101828),
             inset = Color(0x1018280D),
         ),
         popup = PopupColors(
@@ -82,6 +85,7 @@ val LightColors = Colors(
         main = Color(0xFF001830), // dark grey
         secondary = Color(0xFF3E4C59), // medium grey
     ),
+    accent = Color(0xFFE6B87C), // apricot/peach orange
 )
 
 val DarkColors = Colors(
@@ -105,4 +109,5 @@ val DarkColors = Colors(
         main = Color.White,
         secondary = Color(0xFFB0B8C1), // Light grey
     ),
+    accent = Color(0xFFCF7F53), // Deeper orange-brown
 )

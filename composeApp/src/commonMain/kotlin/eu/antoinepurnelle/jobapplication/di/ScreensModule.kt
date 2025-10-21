@@ -14,6 +14,7 @@
 
 package eu.antoinepurnelle.jobapplication.di
 
+import eu.antoinepurnelle.jobapplication.ai.AiScreenViewModel
 import eu.antoinepurnelle.jobapplication.domain.transformer.ExperienceUiTransformer
 import eu.antoinepurnelle.jobapplication.domain.transformer.MainUiTransformer
 import eu.antoinepurnelle.jobapplication.experience.ExperienceViewModel
@@ -30,4 +31,5 @@ val screensModule = module {
     factoryOf(::MainUiTransformerImpl) { bind<MainUiTransformer>() }
     viewModelOf(::ExperienceViewModel)
     factoryOf(::ExperienceUiTransformerImpl) { bind<ExperienceUiTransformer>() }
+    viewModelOf(::AiScreenViewModel)
 }

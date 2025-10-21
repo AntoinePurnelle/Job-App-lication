@@ -14,8 +14,6 @@
 
 package eu.antoinepurnelle.jobapplication.mainscreen
 
-import eu.antoinepurnelle.jobapplication.Pilot
-import eu.antoinepurnelle.jobapplication.Route.ExperienceDetailRoute
 import eu.antoinepurnelle.jobapplication.domain.model.Failure
 import eu.antoinepurnelle.jobapplication.domain.model.Result
 import eu.antoinepurnelle.jobapplication.domain.usecase.FetchMainPageUseCase
@@ -23,16 +21,13 @@ import eu.antoinepurnelle.jobapplication.mainscreen.MainScreenViewModel.MainUiSt
 import eu.antoinepurnelle.jobapplication.mainscreen.MainScreenViewModel.MainUiState.Loaded
 import eu.antoinepurnelle.jobapplication.mainscreen.model.MainUiModel
 import io.kotest.matchers.shouldBe
-import io.mockk.Runs
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.coVerifySequence
 import io.mockk.confirmVerified
 import io.mockk.impl.annotations.MockK
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestDispatcher
@@ -47,7 +42,6 @@ import kotlin.test.Test
 class MainScreenViewModelTest {
 
     @MockK private lateinit var fetchMainPageUseCase: FetchMainPageUseCase
-    @MockK private lateinit var pilot: Pilot
     @MockK private lateinit var uiModel: MainUiModel
 
     private lateinit var viewModel: MainScreenViewModel
@@ -56,7 +50,6 @@ class MainScreenViewModelTest {
     @BeforeTest
     fun setup() {
         fetchMainPageUseCase = mockk()
-        pilot = mockk()
         uiModel = mockk()
 
         Dispatchers.setMain(dispatcher)
@@ -64,7 +57,7 @@ class MainScreenViewModelTest {
 
     @AfterTest
     fun tearDown() {
-        confirmVerified(fetchMainPageUseCase, pilot)
+        confirmVerified(fetchMainPageUseCase)
         Dispatchers.resetMain()
     }
 
@@ -79,7 +72,7 @@ class MainScreenViewModelTest {
         coEvery { fetchMainPageUseCase<MainUiModel>() } returns fetchResult
 
         // WHEN
-        viewModel = MainScreenViewModel(pilot, fetchMainPageUseCase)
+        viewModel = MainScreenViewModel(fetchMainPageUseCase)
 
         // THEN
         // THIS SHOULD HAVE HAPPENED
@@ -106,7 +99,7 @@ class MainScreenViewModelTest {
         coEvery { fetchMainPageUseCase<MainUiModel>() } returns fetchResult
 
         // WHEN
-        viewModel = MainScreenViewModel(pilot, fetchMainPageUseCase)
+        viewModel = MainScreenViewModel(fetchMainPageUseCase)
 
         // THEN
         // THIS SHOULD HAVE HAPPENED
@@ -122,31 +115,9 @@ class MainScreenViewModelTest {
         val fetchResult = Result.Success(uiModel)
         coEvery { fetchMainPageUseCase<MainUiModel>() } returns fetchResult
 
-        viewModel = MainScreenViewModel(pilot, fetchMainPageUseCase)
+        viewModel = MainScreenViewModel(fetchMainPageUseCase)
 
         clearAllMocks()
-    }
-
-    @Test
-    fun `onExperienceClick - should call pilot navigateTo with ExperienceDetailRoute`() {
-        // GIVEN
-        // THIS SETUP
-        createViewModelAndDisregardInit()
-
-        // THIS DATA
-        val id = "experience-id"
-
-        // THIS BEHAVIOR
-        coEvery { pilot.navigateTo(ExperienceDetailRoute(id)) } just Runs
-
-        // WHEN
-        viewModel.onExperienceClick(id)
-
-        // THEN
-        // THIS SHOULD HAVE HAPPENED
-        verify {
-            pilot.navigateTo(ExperienceDetailRoute(id))
-        }
     }
 
     @Test

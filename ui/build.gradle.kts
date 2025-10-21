@@ -86,6 +86,9 @@ kotlin {
                 implementation(libs.androidx.lifecycle.runtimeCompose)
                 // Image loading
                 implementation(libs.kamel.image)
+                // Markdown
+                implementation(libs.markdown)
+                implementation(libs.markdown.m3)
             }
         }
 

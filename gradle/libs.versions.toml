@@ -13,8 +13,9 @@
 [versions]
 # Kotlin
 kotlin = "2.2.20"
-kotlin-browser = "2025.10.7"
+kotlin-browser = "2025.10.9"
 kotlinx-coroutines = "1.10.2"
+kotlinx-serialization = "1.9.0"
 ksp = "2.2.20-2.0.4"
 datetime = "0.7.1"
 
@@ -48,6 +49,9 @@ ktlint = "13.1.0"
 # Kamel
 kamel = "1.0.8"
 
+# Markdown
+markdown = "0.37.0"
+
 [libraries]
 # Kotlin
 kotlin-browser = { module = "org.jetbrains.kotlin-wrappers:kotlin-browser", version.ref = "kotlin-browser" }
@@ -55,6 +59,7 @@ kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutine
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "datetime" }
+kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 
 # Android
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
@@ -81,6 +86,10 @@ ktor-client-serialization = { module = "io.ktor:ktor-serialization-kotlinx-json"
 
 # Kamel
 kamel-image = { module = "media.kamel:kamel-image-default", version.ref = "kamel" }
+
+# Markdown
+markdown = { module = "com.mikepenz:multiplatform-markdown-renderer", version.ref = "markdown" }
+markdown-m3 = { module = "com.mikepenz:multiplatform-markdown-renderer-m3", version.ref = "markdown" }
 
 # Testing
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }

@@ -31,6 +31,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import eu.antoinepurnelle.jobapplication.Route.ExperienceDetailRoute
 import eu.antoinepurnelle.jobapplication.Route.MainScreenRoute
+import eu.antoinepurnelle.jobapplication.ai.AiScreen
 import eu.antoinepurnelle.jobapplication.di.allModules
 import eu.antoinepurnelle.jobapplication.experience.ExperienceScreen
 import eu.antoinepurnelle.jobapplication.mainscreen.MainScreen
@@ -52,7 +53,7 @@ fun App() = KoinApplication(
             modifier = Modifier.fillMaxSize().gradientBackground(),
         ) {
             val navController = rememberNavController()
-            val pilot = Pilot(navController)
+
             NavHost(
                 navController = navController,
                 startDestination = MainScreenRoute,
@@ -82,10 +83,15 @@ fun App() = KoinApplication(
                 },
             ) {
                 composable<MainScreenRoute> {
-                    MainScreen(pilot)
+                    MainScreen(
+                        onNavigate = { route -> navController.navigate(route) },
+                    )
                 }
                 routeComposable<ExperienceDetailRoute> { route ->
-                    ExperienceScreen(route.experienceId, pilot)
+                    ExperienceScreen(route.experienceId, onBack = { navController.popBackStack() })
+                }
+                composable<Route.AiRoute> {
+                    AiScreen(onBack = { navController.popBackStack() })
                 }
             }
         }

@@ -14,13 +14,21 @@
 
 package eu.antoinepurnelle.jobapplication.mainscreen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement.spacedBy
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -30,15 +38,30 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.dropShadow
+import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.platform.LocalUriHandler
-import eu.antoinepurnelle.jobapplication.Pilot
+import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.dp
+import eu.antoinepurnelle.jobapplication.Route
+import eu.antoinepurnelle.jobapplication.Route.AiRoute
+import eu.antoinepurnelle.jobapplication.Route.ExperienceDetailRoute
 import eu.antoinepurnelle.jobapplication.mainscreen.MainScreenViewModel.MainUiState.Error
 import eu.antoinepurnelle.jobapplication.mainscreen.MainScreenViewModel.MainUiState.Loaded
 import eu.antoinepurnelle.jobapplication.mainscreen.MainScreenViewModel.MainUiState.Loading
@@ -81,44 +104,100 @@ import jobapplication.composeapp.generated.resources.ic_email
 import jobapplication.composeapp.generated.resources.ic_github
 import jobapplication.composeapp.generated.resources.ic_linkedin
 import jobapplication.composeapp.generated.resources.ic_phone
+import jobapplication.composeapp.generated.resources.ic_sparkle
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Composable
 fun MainScreen(
-    pilot: Pilot,
-    viewModel: MainScreenViewModel = koinViewModel(parameters = { parametersOf(pilot) }),
+    onNavigate: (Route) -> Unit,
+    viewModel: MainScreenViewModel = koinViewModel(),
 ) {
     when (val state = viewModel.uiState.collectAsState().value) {
         is Error -> ErrorView(state.message)
         is Loading -> LoadingView()
-        is Loaded -> MainView(state, viewModel)
+        is Loaded -> MainView(state, onNavigate, viewModel)
     }
 }
 
 @Composable
 private fun MainView(
     uiState: Loaded,
+    onNavigate: (Route) -> Unit,
     callback: MainCallback,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .statusBarsPadding()
-            .padding(Padding.Screen),
-    ) {
-        HeaderView(uiState.uiModel, callback)
-        ExperienceView(uiState.uiModel.experiences, callback)
-        ProjectsView(uiState.uiModel.projects)
-        EducationView(uiState.uiModel.education)
-        OtherView(uiState.uiModel.other)
-        Spacer(modifier = Modifier.navigationBarsPadding())
+    val scrollState = rememberScrollState()
+    var previousScroll by remember { mutableStateOf(0) }
+    var fabVisible by remember { mutableStateOf(true) }
+
+    LaunchedEffect(scrollState) {
+        snapshotFlow { scrollState.value }.collect { currentScroll ->
+            fabVisible = currentScroll <= previousScroll || currentScroll <= 0
+            previousScroll = currentScroll
+        }
     }
 
-    if (uiState.showBottomSheet) {
-        ShareBottomSheet(uiState.uiModel.shareMenuItems, callback)
+    Scaffold(
+        containerColor = Transparent,
+        floatingActionButton = { Fab(fabVisible, onNavigate) },
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .statusBarsPadding()
+                .padding(Padding.Screen),
+        ) {
+            HeaderView(uiState.uiModel, callback)
+            ExperienceView(uiState.uiModel.experiences, onNavigate)
+            ProjectsView(uiState.uiModel.projects)
+            EducationView(uiState.uiModel.education)
+            OtherView(uiState.uiModel.other)
+            Spacer(modifier = Modifier.navigationBarsPadding())
+        }
+
+        if (uiState.showBottomSheet) {
+            ShareBottomSheet(uiState.uiModel.shareMenuItems, callback)
+        }
+    }
+}
+
+@Composable
+private fun Fab(
+    fabVisible: Boolean,
+    onNavigate: (Route) -> Unit,
+) = AnimatedVisibility(
+    visible = fabVisible,
+    enter = fadeIn() + scaleIn(),
+    exit = fadeOut() + scaleOut(),
+) {
+    val shape = RoundedCornerShapeDefault
+    val iconSize = Size.IconDefault
+    val padding = SpacerDefault
+    val elevation = Size.ElevationFab
+    val totalSize = iconSize + padding * 2 + elevation * 2
+    Box(
+        modifier = Modifier.defaultMinSize(totalSize, totalSize),
+        contentAlignment = Center,
+    ) {
+        Image(
+            painter = painterResource(Res.drawable.ic_sparkle),
+            contentDescription = "AI", // TODO #9 i18l
+            modifier = Modifier
+                .dropShadow(
+                    shape = shape,
+                    shadow = Shadow(
+                        color = colors.decor.card.shadow,
+                        radius = elevation,
+                        offset = DpOffset(x = 0.dp, y = 4.dp),
+                    ),
+                )
+                .background(colors.decor.buttonBackground, shape)
+                .clip(shape)
+                .clickable { onNavigate(AiRoute) }
+                .padding(padding)
+                .size(iconSize),
+        )
     }
 }
 
@@ -126,45 +205,43 @@ private fun MainView(
 private fun ShareBottomSheet(
     shareMenuItems: List<ShareMenuItem>,
     callback: MainCallback,
+) = BottomSheet(
+    onDismissRequest = callback::onBottomSheetDismiss,
 ) {
-    BottomSheet(
-        onDismissRequest = callback::onBottomSheetDismiss,
-    ) {
-        shareMenuItems.forEach { item: ShareMenuItem ->
-            val context = getContext()
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        shareUrl(item.url, context)
-                        callback.onBottomSheetDismiss()
-                    }
-                    .padding(vertical = SpacerSmall, horizontal = SpacerLarge),
-            ) {
-                val iconModifier = Modifier.size(Size.IconDefault)
-                if (item.pictureUrl != null) {
-                    UrlImage(
-                        url = item.pictureUrl,
-                        contentDescription = item.title,
-                        modifier = iconModifier,
-                    )
-                } else {
-                    Image(
-                        painter = painterResource(getShareIconRes()),
-                        contentDescription = item.title,
-                        colorFilter = ColorFilter.tint(colors.text.main),
-                        modifier = iconModifier,
-                    )
+    shareMenuItems.forEach { item: ShareMenuItem ->
+        val context = getContext()
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    shareUrl(item.url, context)
+                    callback.onBottomSheetDismiss()
                 }
-
-                HorizontalSpacer()
-
-                Text(
-                    text = item.title,
-                    style = typography.titleMedium,
-                    color = colors.text.main,
+                .padding(vertical = SpacerSmall, horizontal = SpacerLarge),
+        ) {
+            val iconModifier = Modifier.size(Size.IconDefault)
+            if (item.pictureUrl != null) {
+                UrlImage(
+                    url = item.pictureUrl,
+                    contentDescription = item.title,
+                    modifier = iconModifier,
+                )
+            } else {
+                Image(
+                    painter = painterResource(getShareIconRes()),
+                    contentDescription = item.title,
+                    colorFilter = ColorFilter.tint(colors.text.main),
+                    modifier = iconModifier,
                 )
             }
+
+            HorizontalSpacer()
+
+            Text(
+                text = item.title,
+                style = typography.titleMedium,
+                color = colors.text.main,
+            )
         }
     }
 }
@@ -195,6 +272,7 @@ internal fun HeaderView(
     FlowRow(
         horizontalArrangement = spacedBy(SpacerDefault, alignment = CenterHorizontally),
         verticalArrangement = spacedBy(SpacerDefault),
+        modifier = Modifier.fillMaxWidth(),
     ) {
         header.location?.let {
             Text(text = header.location, style = typography.titleSmall, color = colors.text.main)
@@ -284,12 +362,12 @@ private fun ProjectsView(
 @Composable
 private fun ExperienceView(
     experiences: List<SectionCardItemModel>,
-    callback: MainCallback,
+    onNavigate: (Route) -> Unit,
 ) = SectionCard(
     title = "Experience", // TODO #9 i18l
     items = experiences,
     fallbackPictureUrl = companyFallbackPictureUrl,
-    onItemClick = { callback.onExperienceClick(it.id) },
+    onItemClick = { onNavigate(ExperienceDetailRoute(it.id)) },
     itemTrailingIconRes = Res.drawable.ic_chevron_right,
 )
 

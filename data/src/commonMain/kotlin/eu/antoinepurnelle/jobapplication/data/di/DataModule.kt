@@ -28,5 +28,4 @@ val dataModule = module {
     factoryOf(::ApiClient)
     singleOf(::ResumeRemoteRepository) { bind<ResumeRepository>() }
     factoryOf(::ResumeDtoTransformerImpl) { bind<ResumeDtoTransformer>() }
-
 }

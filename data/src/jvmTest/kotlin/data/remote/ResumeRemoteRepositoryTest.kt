@@ -228,16 +228,54 @@ class ResumeRemoteRepositoryTest {
     }
 
     @Test
-    fun `getExperienceById - cache not initialized - should return Error with UNKNOWN NetworkError`() = runTest {
+    fun `getExperienceById - cache not initialized - fetch fail - should return Error with UNKNOWN NetworkError`() = runTest {
         // GIVEN
         // THIS DATA
         val experienceId = "experience-id"
         val expected = Result.Error(NetworkError.UNKNOWN)
 
+        // THIS BEHAVIOR
+        coEvery { client.getResume() } throws IOException()
+
         // WHEN
         val result = repository.getExperienceById(experienceId)
 
         // THEN
+        // THIS SHOULD HAVE HAPPENED
+        coVerify {
+            client.getResume()
+        }
+        // THIS SHOULD BE
+        result shouldBe expected
+    }
+
+    @Test
+    fun `getExperienceById - cache not initialized - fetch success - should return Success with experience`() = runTest {
+        // GIVEN
+        // THIS DATA
+        val experienceId = "experience-id"
+        val expected = Result.Success(experience)
+
+        val httpResponse = mockk<HttpResponse>()
+        val resumeDto = mockk<ResumeDto>()
+
+        // THIS BEHAVIOR
+        coEvery { client.getResume() } returns httpResponse
+        coEvery { httpResponse.status } returns HttpStatusCode.OK
+        coEvery { httpResponse.body<ResumeDto>() } returns resumeDto
+        coEvery { transformer.transform(resumeDto) } returns Result.Success(resume)
+        coEvery { resume.experiences } returns listOf(experience)
+        coEvery { experience.id } returns experienceId
+
+        // WHEN
+        val result = repository.getExperienceById(experienceId)
+
+        // THEN
+        // THIS SHOULD HAVE HAPPENED
+        coVerify {
+            client.getResume()
+            transformer.transform(resumeDto)
+        }
         // THIS SHOULD BE
         result shouldBe expected
     }

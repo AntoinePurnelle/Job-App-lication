@@ -16,8 +16,6 @@ package eu.antoinepurnelle.jobapplication.mainscreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import eu.antoinepurnelle.jobapplication.Pilot
-import eu.antoinepurnelle.jobapplication.Route.ExperienceDetailRoute
 import eu.antoinepurnelle.jobapplication.domain.model.Result
 import eu.antoinepurnelle.jobapplication.domain.usecase.FetchMainPageUseCase
 import eu.antoinepurnelle.jobapplication.mainscreen.MainScreenViewModel.MainUiState.Loading
@@ -27,7 +25,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class MainScreenViewModel(
-    private val pilot: Pilot,
     fetchMainPage: FetchMainPageUseCase,
 ) : ViewModel(), MainCallback {
 
@@ -46,8 +43,6 @@ class MainScreenViewModel(
             }
         }
     }
-
-    override fun onExperienceClick(id: String) = pilot.navigateTo(ExperienceDetailRoute(id))
 
     override fun onShareClick() {
         _uiState.value = when (val currentState = _uiState.value) {
@@ -80,7 +75,6 @@ class MainScreenViewModel(
 }
 
 interface MainCallback {
-    fun onExperienceClick(id: String)
     fun onShareClick()
     fun onBottomSheetDismiss()
 }

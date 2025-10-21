@@ -82,6 +82,7 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel.nav)
             // Modules
+            implementation(project(":ai"))
             implementation(project(":data"))
             implementation(project(":domain"))
             implementation(project(":ui"))
@@ -138,6 +139,10 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+        }
+        debug {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
         }
     }
     compileOptions {

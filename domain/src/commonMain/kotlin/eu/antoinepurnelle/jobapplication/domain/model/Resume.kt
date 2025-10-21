@@ -15,7 +15,9 @@
 package eu.antoinepurnelle.jobapplication.domain.model
 
 import kotlinx.datetime.LocalDate
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Resume(
     val mainInfo: MainInfo,
     val experiences: List<Experience>,
@@ -24,6 +26,7 @@ data class Resume(
     val other: List<String>,
     val shareTargets: List<ShareTarget>,
 ) {
+    @Serializable
     data class MainInfo(
         val name: String,
         val headline: String,
@@ -37,6 +40,7 @@ data class Resume(
         val mainSkills: List<Skill> = emptyList(),
     )
 
+    @Serializable
     data class Experience(
         val id: String,
         val title: String,
@@ -46,6 +50,7 @@ data class Resume(
         val endDate: LocalDate?,
         val positions: List<Position> = emptyList(),
     ) {
+        @Serializable
         data class Position(
             val title: String,
             val description: String,
@@ -53,6 +58,7 @@ data class Resume(
         )
     }
 
+    @Serializable
     data class Project(
         val name: String,
         val description: String,
@@ -61,11 +67,13 @@ data class Resume(
         val skills: List<Skill> = emptyList(),
     )
 
+    @Serializable
     data class Education(
         val diplomas: List<Diploma> = emptyList(),
         val courses: List<Course> = emptyList(),
         val conferences: List<Conference> = emptyList(),
     ) {
+        @Serializable
         data class Diploma(
             val name: String,
             val description: String?,
@@ -74,6 +82,7 @@ data class Resume(
             val pictureUrl: String?,
         )
 
+        @Serializable
         data class Course(
             val name: String,
             val dateCompleted: String,
@@ -81,6 +90,7 @@ data class Resume(
             val pictureUrl: String?,
         )
 
+        @Serializable
         data class Conference(
             val name: String,
             val dateAttended: String,
@@ -88,12 +98,14 @@ data class Resume(
         )
     }
 
+    @Serializable
     data class ShareTarget(
         val name: String,
         val pictureUrl: String?,
         val url: String,
     )
 
+    @Serializable
     data class Skill(
         val name: String,
         val pictureUrl: String?,

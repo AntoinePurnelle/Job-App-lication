@@ -28,6 +28,12 @@ interface ResumeRepository {
      */
     suspend fun getResume(): Result<Resume, Failure>
 
-    fun getExperienceById(id: String): Result<Experience, Failure>
+    /**
+     * Fetch a specific experience by its ID.
+     *
+     * @param id The ID of the experience to fetch.
+     * @return [Result] containing either the [Experience] on success or a [Failure] on failure.
+     */
+    suspend fun getExperienceById(id: String): Result<Experience, Failure>
 
 }
