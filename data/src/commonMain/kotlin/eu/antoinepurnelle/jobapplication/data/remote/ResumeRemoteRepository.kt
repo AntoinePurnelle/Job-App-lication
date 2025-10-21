@@ -20,6 +20,7 @@ import eu.antoinepurnelle.jobapplication.domain.model.Failure
 import eu.antoinepurnelle.jobapplication.domain.model.NetworkError
 import eu.antoinepurnelle.jobapplication.domain.model.Result
 import eu.antoinepurnelle.jobapplication.domain.model.Resume
+import eu.antoinepurnelle.jobapplication.domain.model.Resume.Experience
 import eu.antoinepurnelle.jobapplication.domain.repository.ResumeRepository
 import io.ktor.client.call.body
 import kotlinx.io.IOException
@@ -32,7 +33,13 @@ class ResumeRemoteRepository(
 
     private var cache: Resume? = null
 
-    override suspend fun getResume(): Result<Resume, Failure> = try {
+    override suspend fun getResume(): Result<Resume, Failure> = if (cache != null) {
+        Result.Success(cache!!)
+    } else {
+        fetchFromNetwork()
+    }
+
+    private suspend fun fetchFromNetwork(): Result<Resume, Failure> = try {
         val response = client.getResume()
         when (response.status.value) {
             in 200..299 -> {
@@ -60,12 +67,15 @@ class ResumeRemoteRepository(
         Result.Error(NetworkError.UNKNOWN)
     }
 
-    override fun getExperienceById(id: String): Result<Resume.Experience, Failure> {
-        val experience = cache?.experiences?.find { it.id == id }
-        return if (experience != null) {
-            Result.Success(experience)
-        } else {
-            Result.Error(NetworkError.UNKNOWN)
+    override suspend fun getExperienceById(id: String): Result<Experience, Failure> = when (val resumeResult = getResume()) {
+        is Result.Error -> resumeResult
+        is Result.Success -> {
+            val experience = resumeResult.data.experiences.find { it.id == id }
+            if (experience != null) {
+                Result.Success(experience)
+            } else {
+                Result.Error(NetworkError.UNKNOWN)
+            }
         }
     }
 

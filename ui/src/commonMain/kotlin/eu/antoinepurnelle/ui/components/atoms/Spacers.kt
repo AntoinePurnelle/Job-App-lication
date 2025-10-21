@@ -29,46 +29,46 @@ import eu.antoinepurnelle.ui.theme.Dimens.Padding.SpacerXSmall
  * A vertical spacer with a customizable height. (default 16.dp)
  */
 @Composable
-fun VerticalSpacer(height: Dp = SpacerDefault) {
-    Spacer(modifier = Modifier.height(height))
+fun VerticalSpacer(height: Dp = SpacerDefault, modifier: Modifier = Modifier) {
+    Spacer(modifier = modifier.height(height))
 }
 
 /**
  * A 8.dp vertical spacer.
  */
 @Composable
-fun VerticalSpacerSmall() {
-    VerticalSpacer(height = SpacerXSmall)
+fun VerticalSpacerSmall(modifier: Modifier = Modifier) {
+    VerticalSpacer(height = SpacerXSmall, modifier = modifier)
 }
 
 /**
  * A 24.dp vertical spacer.
  */
 @Composable
-fun VerticalSpacerLarge() {
-    VerticalSpacer(height = SpacerLarge)
+fun VerticalSpacerLarge(modifier: Modifier = Modifier) {
+    VerticalSpacer(height = SpacerLarge, modifier = modifier)
 }
 
 /**
  * A horizontal spacer with a customizable width. (default 16.dp)
  */
 @Composable
-fun HorizontalSpacer(width: Dp = SpacerDefault) {
-    Spacer(modifier = Modifier.width(width))
+fun HorizontalSpacer(width: Dp = SpacerDefault, modifier: Modifier = Modifier) {
+    Spacer(modifier = modifier.width(width))
 }
 
 /**
  * A 8.dp horizontal spacer.
  */
 @Composable
-fun HorizontalSpacerSmall() {
-    HorizontalSpacer(width = SpacerXSmall)
+fun HorizontalSpacerSmall(modifier: Modifier = Modifier) {
+    HorizontalSpacer(width = SpacerXSmall, modifier = modifier)
 }
 
 /**
  * A 32.dp horizontal spacer.
  */
 @Composable
-fun HorizontalSpacerXLarge() {
-    HorizontalSpacer(width = SpacerXLarge)
+fun HorizontalSpacerXLarge(modifier: Modifier = Modifier) {
+    HorizontalSpacer(width = SpacerXLarge, modifier = modifier)
 }

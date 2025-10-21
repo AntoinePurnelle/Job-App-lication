@@ -82,6 +82,7 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel.nav)
             // Modules
+            implementation(project(":ai"))
             implementation(project(":data"))
             implementation(project(":domain"))
             implementation(project(":ui"))
@@ -126,8 +127,8 @@ android {
         applicationId = "eu.antoinepurnelle.jobapplication"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 4
-        versionName = "0.4"
+        versionCode = 5
+        versionName = "0.5"
     }
     packaging {
         resources {
@@ -138,6 +139,10 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+        }
+        debug {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
         }
     }
     compileOptions {

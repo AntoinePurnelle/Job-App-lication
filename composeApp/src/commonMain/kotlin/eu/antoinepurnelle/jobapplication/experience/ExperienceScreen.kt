@@ -14,6 +14,7 @@
 
 package eu.antoinepurnelle.jobapplication.experience
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -32,7 +33,6 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Alignment.Companion.Start
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import eu.antoinepurnelle.jobapplication.Pilot
 import eu.antoinepurnelle.jobapplication.experience.ExperienceViewModel.ExperienceUiState.Error
 import eu.antoinepurnelle.jobapplication.experience.ExperienceViewModel.ExperienceUiState.Loaded
 import eu.antoinepurnelle.jobapplication.experience.ExperienceViewModel.ExperienceUiState.Loading
@@ -47,7 +47,6 @@ import eu.antoinepurnelle.ui.components.molecules.cardDecoration
 import eu.antoinepurnelle.ui.components.organisms.ErrorView
 import eu.antoinepurnelle.ui.components.organisms.LoadingView
 import eu.antoinepurnelle.ui.components.organisms.model.SubSectionModel
-import eu.antoinepurnelle.ui.onClick
 import eu.antoinepurnelle.ui.theme.Dimens.Padding
 import eu.antoinepurnelle.ui.theme.Dimens.Padding.SpacerDefault
 import eu.antoinepurnelle.ui.theme.Dimens.Size
@@ -61,34 +60,34 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun ExperienceScreen(
     id: String,
-    pilot: Pilot,
-    viewModel: ExperienceViewModel = koinViewModel(parameters = { parametersOf(id, pilot) }),
+    onBack: () -> Unit,
+    viewModel: ExperienceViewModel = koinViewModel { parametersOf(id) },
 ) {
     when (val state = viewModel.uiState.collectAsState().value) {
         is Loading -> LoadingView()
         is Error -> ErrorView(state.message)
-        is Loaded -> ExperienceView(state.data, viewModel)
+        is Loaded -> ExperienceView(state.data, onBack)
     }
 }
 
 @Composable
 private fun ExperienceView(
     uiModel: ExperienceUiModel,
-    callback: ExperienceCallback,
+    onBack: () -> Unit,
 ) = Column(
     modifier = Modifier
         .fillMaxSize()
         .systemBarsPadding()
         .padding(Padding.Screen),
 ) {
-    HeaderView(uiModel.header, callback)
+    HeaderView(uiModel.header, onBack)
     PositionsView(uiModel.positions)
 }
 
 @Composable
 private fun HeaderView(
     header: ExperienceHeader,
-    callback: ExperienceCallback,
+    onBack: () -> Unit,
 ) = Column(
     modifier = Modifier.cardDecoration(PaddingValues()).fillMaxWidth(),
 ) {
@@ -102,7 +101,7 @@ private fun HeaderView(
             tint = colors.text.main,
             modifier = Modifier
                 .clip(RoundedCornerShapeDefault)
-                .onClick(callback::onBackPressed)
+                .clickable { onBack() }
                 .padding(horizontal = Padding.CardHorizontal, vertical = Padding.CardVertical)
                 .size(Size.IconSmall),
         )

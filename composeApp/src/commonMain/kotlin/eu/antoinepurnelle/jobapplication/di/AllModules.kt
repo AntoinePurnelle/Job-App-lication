@@ -14,10 +14,12 @@
 
 package eu.antoinepurnelle.jobapplication.di
 
+import eu.antoinepurnelle.jobapplication.ai.di.aiModule
 import eu.antoinepurnelle.jobapplication.data.di.dataModule
 import eu.antoinepurnelle.jobapplication.domain.di.domainModule
 
 val allModules = listOf(
+    aiModule,
     dataModule,
     domainModule,
     screensModule,

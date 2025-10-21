@@ -43,6 +43,7 @@ object Dimens {
         val RoundedCornerSizeSmall = 8.dp
         val RoundedCornerSizeDefault = 16.dp
         val ElevationDefault = 4.dp
+        val ElevationFab = 8.dp
 
         val IconDefault = 24.dp
         val IconSmall = 16.dp

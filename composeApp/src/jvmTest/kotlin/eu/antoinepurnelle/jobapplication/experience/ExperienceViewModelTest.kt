@@ -14,7 +14,6 @@
 
 package eu.antoinepurnelle.jobapplication.experience
 
-import eu.antoinepurnelle.jobapplication.Pilot
 import eu.antoinepurnelle.jobapplication.domain.model.Failure
 import eu.antoinepurnelle.jobapplication.domain.model.Result
 import eu.antoinepurnelle.jobapplication.domain.usecase.GetExperiencePageUseCase
@@ -22,16 +21,11 @@ import eu.antoinepurnelle.jobapplication.experience.ExperienceViewModel.Experien
 import eu.antoinepurnelle.jobapplication.experience.model.ExperienceUiModel
 import eu.antoinepurnelle.jobapplication.mainscreen.model.MainUiModel
 import io.kotest.matchers.shouldBe
-import io.mockk.Runs
-import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.confirmVerified
-import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestDispatcher
@@ -46,7 +40,6 @@ import kotlin.test.Test
 class ExperienceViewModelTest {
 
     @MockK private lateinit var getExperiencePageUseCase: GetExperiencePageUseCase
-    @MockK private lateinit var pilot: Pilot
 
     private lateinit var viewModel: ExperienceViewModel
     private val dispatcher: TestDispatcher = UnconfinedTestDispatcher()
@@ -54,14 +47,13 @@ class ExperienceViewModelTest {
     @BeforeTest
     fun setup() {
         getExperiencePageUseCase = mockk()
-        pilot = mockk()
 
         Dispatchers.setMain(dispatcher)
     }
 
     @AfterTest
     fun tearDown() {
-        confirmVerified(getExperiencePageUseCase, pilot)
+        confirmVerified(getExperiencePageUseCase)
         Dispatchers.resetMain()
     }
 
@@ -80,7 +72,6 @@ class ExperienceViewModelTest {
         // WHEN
         viewModel = ExperienceViewModel(
             id = experienceId,
-            pilot = pilot,
             getExperiencePage = getExperiencePageUseCase,
         )
 
@@ -112,7 +103,6 @@ class ExperienceViewModelTest {
         // WHEN
         viewModel = ExperienceViewModel(
             id = experienceId,
-            pilot = pilot,
             getExperiencePage = getExperiencePageUseCase,
         )
 
@@ -124,40 +114,6 @@ class ExperienceViewModelTest {
 
         // THIS SHOULD BE
         viewModel shouldHaveState expectedUiState
-    }
-
-    private fun createViewModelAndDisregardInit() {
-        val experienceId = "experienceId"
-        val uiModel = mockk<ExperienceUiModel>()
-        val getResult = Result.Success(uiModel)
-        coEvery { getExperiencePageUseCase<ExperienceUiModel>(experienceId) } returns getResult
-
-        viewModel = ExperienceViewModel(
-            id = experienceId,
-            pilot = pilot,
-            getExperiencePage = getExperiencePageUseCase,
-        )
-
-        clearAllMocks()
-    }
-
-    @Test
-    fun `onBackPressed - should call pilot back`() {
-        // GIVEN
-        // THIS SETUP
-        createViewModelAndDisregardInit()
-
-        // THIS BEHAVIOR
-        every { pilot.back() } just Runs
-
-        // WHEN
-        viewModel.onBackPressed()
-
-        // THEN
-        // THIS SHOULD HAVE HAPPENED
-        verify {
-            pilot.back()
-        }
     }
 
     private infix fun ExperienceViewModel.shouldHaveState(state: ExperienceUiState) {

@@ -16,7 +16,6 @@ package eu.antoinepurnelle.jobapplication.experience
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import eu.antoinepurnelle.jobapplication.Pilot
 import eu.antoinepurnelle.jobapplication.domain.model.Result
 import eu.antoinepurnelle.jobapplication.domain.usecase.GetExperiencePageUseCase
 import eu.antoinepurnelle.jobapplication.experience.model.ExperienceUiModel
@@ -26,9 +25,8 @@ import kotlinx.coroutines.launch
 
 class ExperienceViewModel(
     id: String,
-    private val pilot: Pilot,
     getExperiencePage: GetExperiencePageUseCase,
-) : ViewModel(), ExperienceCallback {
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow<ExperienceUiState>(ExperienceUiState.Loading)
     val uiState = _uiState.asStateFlow()
@@ -46,16 +44,10 @@ class ExperienceViewModel(
         }
     }
 
-    override fun onBackPressed() = pilot.back()
-
     sealed interface ExperienceUiState {
         data object Loading : ExperienceUiState
         data class Error(val message: String) : ExperienceUiState
         data class Loaded(val data: ExperienceUiModel) : ExperienceUiState
     }
 
-}
-
-fun interface ExperienceCallback {
-    fun onBackPressed()
 }

@@ -38,7 +38,7 @@ fun QuickAction(
 ) = Image(
     painter = painterResource(iconRes),
     contentDescription = contentDescription,
-    colorFilter = ColorFilter.tint(colors.text.main),
+    colorFilter = ColorFilter.tint(colors.decor.buttonForeground),
     modifier = Modifier
         .clip(CircleShape)
         .clickable(onClick = onclick)

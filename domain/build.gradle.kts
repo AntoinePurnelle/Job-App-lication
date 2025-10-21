@@ -20,6 +20,7 @@ plugins {
     alias(libs.plugins.androidLint)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotest)
+    alias(libs.plugins.kotlinxSerialization)
 }
 
 kotlin {
@@ -71,6 +72,7 @@ kotlin {
                 // Koin core for DI
                 implementation(project.dependencies.platform(libs.koin.bom))
                 api(libs.koin.core)
+                implementation(libs.kotlinx.serialization)
             }
         }
 

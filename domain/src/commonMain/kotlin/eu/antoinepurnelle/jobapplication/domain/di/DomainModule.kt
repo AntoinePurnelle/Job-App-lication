@@ -18,6 +18,8 @@ import eu.antoinepurnelle.jobapplication.domain.usecase.FetchMainPageUseCase
 import eu.antoinepurnelle.jobapplication.domain.usecase.FetchMainPageUseCaseImpl
 import eu.antoinepurnelle.jobapplication.domain.usecase.GetExperiencePageUseCase
 import eu.antoinepurnelle.jobapplication.domain.usecase.GetExperiencePageUseCaseImpl
+import eu.antoinepurnelle.jobapplication.domain.usecase.PromptUseCase
+import eu.antoinepurnelle.jobapplication.domain.usecase.PromptUseCaseImpl
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
@@ -25,4 +27,5 @@ import org.koin.dsl.module
 val domainModule = module {
     factoryOf(::FetchMainPageUseCaseImpl) { bind<FetchMainPageUseCase>() }
     factoryOf(::GetExperiencePageUseCaseImpl) { bind<GetExperiencePageUseCase>() }
+    factoryOf(::PromptUseCaseImpl) { bind<PromptUseCase>() }
 }
